@@ -1,0 +1,56 @@
+{
+  "name": "binary-data",
+  "version": "0.0.0",
+  "description": "Declarative encoder/decoder of various binary data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "cover": "jest --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reklatsmasters/binary-data.git"
+  },
+  "keywords": [
+    "binary",
+    "data",
+    "buffer",
+    "stream",
+    "decode",
+    "encode",
+    "bl",
+    "bin-protocol",
+    "restructure"
+  ],
+  "author": "Dmitry Tsvettsikh <me@reklatsmasters.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reklatsmasters/binary-data/issues"
+  },
+  "homepage": "https://github.com/reklatsmasters/binary-data#readme",
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "bl": "^1.2.1",
+    "is-plain-object": "^2.0.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.1.1",
+    "eslint-plugin-prettier": "^2.1.2",
+    "jest": "^20.0.4",
+    "prettier": "^1.5.2",
+    "sinon": "^2.3.6"
+  },
+  "jest": {
+    "modulePaths": [
+      "<rootDir>"
+    ],
+    "testRegex": "test/(.*)\\.js$",
+    "coverageDirectory": "<rootDir>/coverage",
+    "coveragePathIgnorePatterns": [
+      "/test/",
+      "/testing/"
+    ]
+  }
+}
