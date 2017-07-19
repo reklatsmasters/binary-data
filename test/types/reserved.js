@@ -92,4 +92,22 @@ describe('reserved', () => {
     expect(type.encodingLength(value)).toBe(size * length)
     expect(lowtype.encodingLength.callCount).toBe(1)
   })
+
+  test('encodingLength should work when `size` is function', () => {
+    const size = 2
+    const value = 1
+    const context = { node: value }
+    const callback = sinon.stub()
+    const type = reserved(lowtype, callback)
+    const length = 2
+
+    callback.withArgs(context).returns(size)
+    callback.throws('callback')
+
+    lowtype.encodingLength.withArgs(value, context).returns(length)
+    common.plug(lowtype)
+
+    expect(type.encodingLength(value, context)).toBe(size * length)
+    expect(lowtype.encodingLength.callCount).toBe(1)
+  })
 })
