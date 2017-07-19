@@ -11,9 +11,13 @@ describe('encodingLength', () => {
       a: 1,
     }
 
+    const context = {
+      node: obj,
+    }
+
     const expectedSize = 5
 
-    schema.a.encodingLength.withArgs(obj.a).returns(expectedSize)
+    schema.a.encodingLength.withArgs(obj.a, context).returns(expectedSize)
     common.plug(schema.a)
 
     expect(encodingLength(obj, schema)).toBe(expectedSize)
@@ -35,10 +39,14 @@ describe('encodingLength', () => {
       },
     }
 
+    const context = {
+      node: obj,
+    }
+
     const expectedSize = 5
 
-    schema.a.encodingLength.withArgs(obj.a).returns(expectedSize)
-    schema.b.c.encodingLength.withArgs(obj.b.c).returns(expectedSize)
+    schema.a.encodingLength.withArgs(obj.a, context).returns(expectedSize)
+    schema.b.c.encodingLength.withArgs(obj.b.c, context).returns(expectedSize)
     common.plug(schema.a)
     common.plug(schema.b.c)
 
