@@ -1,6 +1,6 @@
 {
   "name": "binary-data",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Declarative encoder/decoder of various binary data.",
   "main": "index.js",
   "scripts": {
