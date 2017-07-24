@@ -5,6 +5,7 @@
 [![node](https://img.shields.io/node/v/binary-data.svg)](https://npmjs.org/package/binary-data)
 [![license](https://img.shields.io/npm/l/binary-data.svg)](https://npmjs.org/package/binary-data)
 [![downloads](https://img.shields.io/npm/dm/binary-data.svg)](https://npmjs.org/package/binary-data)
+[![Greenkeeper badge](https://badges.greenkeeper.io/reklatsmasters/binary-data.svg)](https://greenkeeper.io/)
 
 Declarative encoder/decoder of various binary data. This module works almost like as [`binary`](https://www.npmjs.com/package/binary) or [`restructure`](https://www.npmjs.com/package/restructure) but provided modern and clean api.
 
