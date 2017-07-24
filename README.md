@@ -1,5 +1,7 @@
 # binary-data
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/reklatsmasters/binary-data.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/reklatsmasters/binary-data.svg?branch=master)](https://travis-ci.org/reklatsmasters/binary-data)
 [![npm](https://img.shields.io/npm/v/binary-data.svg)](https://npmjs.org/package/binary-data)
 [![node](https://img.shields.io/node/v/binary-data.svg)](https://npmjs.org/package/binary-data)
