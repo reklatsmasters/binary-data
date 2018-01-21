@@ -7,6 +7,7 @@ const bool = require('./lib/types/bool')
 const reserved = require('./lib/types/reserved')
 const string = require('./lib/types/string')
 const numbers = require('./lib/types/numbers')
+const when = require('./lib/types/when')
 
 const encode = require('./lib/encode')
 const decode = require('./lib/decode')
@@ -17,7 +18,8 @@ const types = {
   bool,
   buffer,
   reserved,
-  string
+  string,
+  when
 }
 
 for (const type of Object.keys(numbers)) {
