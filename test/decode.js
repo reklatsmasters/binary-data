@@ -42,7 +42,7 @@ describe('decode', () => {
 
     const reserved = new Reserved()
     sinon.stub(reserved, 'decode')
-    expect(reserved.is_mock).toBe(true)
+    expect(reserved.isMock).toBe(true)
 
     const schema = {
       a: {

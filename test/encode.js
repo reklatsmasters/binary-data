@@ -46,7 +46,7 @@ describe('encode', () => {
 
     const reserved = new Reserved()
     sinon.stub(reserved, 'encode')
-    expect(reserved.is_mock).toBe(true)
+    expect(reserved.isMock).toBe(true)
 
     const schema = {
       a: {

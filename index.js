@@ -17,7 +17,7 @@ const types = {
   bool,
   buffer,
   reserved,
-  string,
+  string
 }
 
 for (const type of Object.keys(numbers)) {
@@ -37,17 +37,17 @@ function createDecodeStream(buf) {
 }
 
 module.exports = {
-  /* main api */
+  /* Main api */
   createEncodeStream,
   createDecodeStream,
   encode,
   decode,
   encodingLength,
 
-  /* data types */
+  /* Data types */
   types,
 
-  /* re-export utils */
+  /* Re-export utils */
   EncodeStream,
-  DecodeStream,
+  DecodeStream
 }
