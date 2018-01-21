@@ -4,8 +4,10 @@
   "description": "Declarative encoder/decoder of various binary data.",
   "main": "index.js",
   "scripts": {
-    "test": "xo && jest",
-    "cover": "jest --coverage"
+    "lint": "xo",
+    "cover": "jest --coverage",
+    "test": "npm run lint && jest",
+    "test-ci": "npm run lint && npm run cover"
   },
   "repository": {
     "type": "git",
