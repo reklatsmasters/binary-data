@@ -1,8 +1,10 @@
 jest.mock('lib/types/reserved')
+jest.mock('lib/stream/decode')
 
 const sinon = require('sinon')
 const { Reserved } = require('lib/types/reserved')
 const decode = require('lib/decode')
+const DecodeStream = require('lib/stream/decode')
 
 describe('decode', () => {
   test('should use schema', () => {
@@ -159,5 +161,29 @@ describe('decode', () => {
     const result = decode(rstream, schema)
     expect(result).toEqual(expectedResult)
     expect(decode.bytes).toEqual(decodeType.bytes * 2)
+  })
+
+  test('should decode buffers', () => {
+    const buffer = Buffer.alloc(1)
+
+    const schema = {
+      a: {
+        decode: sinon.stub(),
+      }
+    }
+
+    const expectedResult = {
+      a: 100,
+    }
+
+    schema.a.decode.withArgs(sinon.match.instanceOf(DecodeStream)).returns(expectedResult.a)
+    schema.a.decode.throws('schema.a.decode')
+    schema.a.decode.bytes = 12
+
+    const result = decode(buffer, schema)
+
+    expect(result).toEqual(expectedResult)
+    expect(decode.bytes).toEqual(schema.a.decode.bytes)
+    expect(schema.a.decode.callCount).toEqual(1)
   })
 })

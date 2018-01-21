@@ -22,12 +22,15 @@ const protocol = {
   value: array(string(null), uint8)
 }
 
-socket.on('message', (msg) => {
+socket.on('message', (message) => {
   // 2. create decode stream
-  const rstream = createDecodeStream(msg)
+  const rstream = createDecodeStream(message)
 
-  // 3. decode
+  // 3. decode using stream
   const packet = decode(rstream, protocol)
+
+  // 3.1 or decode message directly
+  const packet = decode(message, protocol)
 })
 ```
 
@@ -61,11 +64,11 @@ wstream.pipe(socket)
 const buf = wstream.slice()
 ```
 
-See [stun](https://github.com/reklatsmasters/stun) module for complete example.
+See [stun](https://github.com/nodertc/stun) module for complete example.
 
 ## API
 
-#### `decode(rstream: DecodeStream, type: PrimitiveType|Object): any`
+#### `decode(rstream: DecodeStream | Buffer, type: PrimitiveType|Object): any`
 
 Reads any data from stream `rstream` using data type `type`. See examples above.
 
