@@ -177,6 +177,19 @@ const packet = {
 decode(rstream, packet) // return { type }
 ```
 
+#### `when(fn: function(context): boolean, type)`
+
+Special type for conditions. Argument `fn` should be a function and should return boolean value. The `type`
+argument will be evaluated when the first one returns positive value.
+
+```js
+const schema = {
+  type: uint8,
+  bytes: when(({ node }) => node.type === 1, string(uint16be)),
+  list: when(({ node }) => node.type === 2, array(uint32be, uint8))
+}
+```
+
 ## License
 
 MIT, 2017 (c) Dmitriy Tsvettsikh

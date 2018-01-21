@@ -186,4 +186,79 @@ describe('decode', () => {
     expect(decode.bytes).toEqual(schema.a.decode.bytes)
     expect(schema.a.decode.callCount).toEqual(1)
   })
+
+  test('should decode positive conditions', () => {
+    const rstream = {}
+
+    const context = {
+      node: {}
+    }
+
+    const schema = {
+      a: {
+        decode: sinon.stub(),
+      },
+      b: {
+        decode: sinon.stub(),
+      }
+    }
+
+    const expectedResult = {
+      a: 1,
+      b: 2
+    }
+
+    schema.a.decode.withArgs(rstream).returns(expectedResult.a)
+    schema.a.decode.throws('schema.a.decode')
+    schema.a.decode.bytes = 12
+
+    schema.b.decode.withArgs(rstream).returns(expectedResult.b)
+    schema.b.decode.throws('schema.b.decode')
+    schema.b.decode.bytes = 4
+    schema.b.decode.status = true
+
+    const result = decode(rstream, schema)
+
+    expect(result).toEqual(expectedResult)
+    expect(decode.bytes).toEqual(schema.a.decode.bytes + schema.b.decode.bytes)
+    expect(schema.a.decode.callCount).toEqual(1)
+    expect(schema.b.decode.callCount).toEqual(1)
+  })
+
+  test('should skip negative conditions', () => {
+    const rstream = {}
+
+    const context = {
+      node: {}
+    }
+
+    const schema = {
+      a: {
+        decode: sinon.stub(),
+      },
+      b: {
+        decode: sinon.stub(),
+      }
+    }
+
+    const expectedResult = {
+      a: 1
+    }
+
+    schema.a.decode.withArgs(rstream).returns(expectedResult.a)
+    schema.a.decode.throws('schema.a.decode')
+    schema.a.decode.bytes = 12
+
+    schema.b.decode.withArgs(rstream).returns(null)
+    schema.b.decode.throws('schema.b.decode')
+    schema.b.decode.bytes = 0
+    schema.b.decode.status = false
+
+    const result = decode(rstream, schema)
+
+    expect(result).toEqual(expectedResult)
+    expect(decode.bytes).toEqual(schema.a.decode.bytes + schema.b.decode.bytes)
+    expect(schema.a.decode.callCount).toEqual(1)
+    expect(schema.b.decode.callCount).toEqual(1)
+  })
 })
