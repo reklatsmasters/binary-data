@@ -26,15 +26,21 @@ for (const type of Object.keys(numbers)) {
   types[type] = numbers[type]
 }
 
+/**
+ * Creates duplex stream for encode objects
+ * into binary data.
+ * @returns {EncodeStream}
+ */
 function createEncodeStream() {
   return new EncodeStream()
 }
 
+/**
+ * Creates duplex stream for decode binary data.
+ * @param {Buffer} [buf]
+ * @returns {DecodeStream}
+ */
 function createDecodeStream(buf) {
-  if (!Buffer.isBuffer(buf)) {
-    throw new TypeError('Argument #1 should be a Buffer.')
-  }
-
   return new DecodeStream(buf)
 }
 
