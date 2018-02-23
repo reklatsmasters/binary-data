@@ -17,21 +17,31 @@ Declarative encoder/decoder of various binary data. This module works almost lik
 ```js
 const { decode, createDecodeStream, types: { uint8, array, string } } = require('binary-data')
 
-// 1. define your own schema
+// 1.1 define your own schema as plain object
 const protocol = {
   type: uint8,
   value: array(string(null), uint8)
 }
 
 socket.on('message', (message) => {
-  // 2. create decode stream
-  const rstream = createDecodeStream(message)
-
-  // 3. decode using stream
-  const packet = decode(rstream, protocol)
-
-  // 3.1 or decode message directly
+  // 1.2 decode message
   const packet = decode(message, protocol)
+})
+
+// 2.1 also you can decode messages from streams
+const unicast = require('unicast')
+
+const socket = unicast.createSocket({ /* options */ })
+
+// 2.2 create stream
+const decodeStream = createDecodeStream()
+
+// 2.3 connect streams
+socket.pipe(decodeStream)
+
+// 2.4. decode messages chunk by chunk or what you want
+socket.on('data', () => {
+  const packet = decode(decodeStream, protocol)
 })
 ```
 
@@ -46,7 +56,7 @@ const helloPacket = {
   data: buffer(uint8)
 }
 
-// 2. create data object (string, array - what's you want)
+// 2. create data object (string, array - what you want)
 const hello = {
   type: 12,
   data: Buffer.from('my random data')
@@ -55,11 +65,11 @@ const hello = {
 // 3. create encode stream
 const wstream = createEncodeStream()
 
-// 4. encode all your data
-encode(hello, wstream, helloPacket)
-
-// 5. write to the socket
+// 4. connect streams
 wstream.pipe(socket)
+
+// 5. encode all your data multiple times
+encode(hello, wstream, helloPacket)
 
 // or convert to a buffer
 const buf = wstream.slice()
@@ -73,7 +83,7 @@ See [stun](https://github.com/nodertc/stun) module for complete example.
 * [`encode(item: any, wstream: EncodeStream, type: PrimitiveType|Object): void`](#encode)
 * [`encodingLength(item: any, type: PrimitiveType|Object): Number`](#encoding-length)
 * [`createEncodeStream(): EncodeStream`](#create-encode-stream)
-* [`createDecodeStream(buf: Buffer): DecodeStream`](#create-decode-stream)
+* [`createDecodeStream([buf: Buffer]): DecodeStream`](#create-decode-stream)
 * [Types](#types)
   * [`(u)int(8, 16, 24, 32, 40, 48)(be, le)`](#types-int)
   * [`(double, float)(be, le)`](#types-float)
@@ -110,7 +120,7 @@ Create instance of EncodeStream.
 
 <a name='create-decode-stream' />
 
-#### `createDecodeStream(buf: Buffer): DecodeStream`
+#### `createDecodeStream([buf: Buffer]): DecodeStream`
 
 Create instance of DecodeStream using buffer `buf`.
 
