@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const when = require('lib/types/when')
+const when = require('types/when')
 const common = require('testing/common')
 
 describe('when', () => {

@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const reserved = require('lib/types/reserved')
+const reserved = require('types/reserved')
 const encode = require('lib/encode')
 const common = require('testing/common')
 

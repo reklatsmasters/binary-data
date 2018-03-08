@@ -9,10 +9,14 @@ const packet = Buffer.from('16fefd000000000000000000a60100009a000000000000009a' 
 
 const BinaryDataPacket = types.array(types.uint8, 179)
 
-let i = 1e5
+const count = 1e5
+
+function test(i) {
+  while (--i > 0) {
+    decode(packet, BinaryDataPacket)
+  }
+}
 
 console.time('binary data')
-while (--i > 0) {
-  decode(packet, BinaryDataPacket)
-}
+test(count)
 console.timeEnd('binary data')

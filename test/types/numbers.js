@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const types = require('lib/types/numbers')
+const types = require('types/numbers')
 
 describe('doublebe', () => {
   it('write', () => {

@@ -1,4 +1,4 @@
-const bool = require('lib/types/bool')
+const bool = require('types/bool')
 const common = require('testing/common')
 
 describe('bool', () => {

@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const buffer = require('lib/types/buffer')
+const buffer = require('types/buffer')
 const common = require('testing/common')
 
 describe('buffer', () => {

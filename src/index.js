@@ -1,17 +1,16 @@
-const EncodeStream = require('./lib/stream/encode')
-const DecodeStream = require('./lib/stream/decode')
+const EncodeStream = require('streams/encode')
+const DecodeStream = require('streams/decode')
+const array = require('types/array')
+const buffer = require('types/buffer')
+const bool = require('types/bool')
+const reserved = require('types/reserved')
+const string = require('types/string')
+const numbers = require('types/numbers')
+const when = require('types/when')
 
-const array = require('./lib/types/array')
-const buffer = require('./lib/types/buffer')
-const bool = require('./lib/types/bool')
-const reserved = require('./lib/types/reserved')
-const string = require('./lib/types/string')
-const numbers = require('./lib/types/numbers')
-const when = require('./lib/types/when')
-
-const encode = require('./lib/encode')
-const decode = require('./lib/decode')
-const encodingLength = require('./lib/encoding-length')
+const encode = require('lib/encode')
+const decode = require('lib/decode')
+const encodingLength = require('lib/encoding-length')
 
 const types = {
   array,

@@ -1,5 +1,5 @@
 const bl = require('bl')
-const DecodeStream = require('lib/stream/decode')
+const DecodeStream = require('streams/decode')
 
 describe('decode', () => {
   test('readBuffer', () => {

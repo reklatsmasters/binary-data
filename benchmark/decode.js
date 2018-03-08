@@ -37,10 +37,14 @@ const BinaryDataPacket = {
   }
 }
 
-let i = 1e5
+const count = 1e5
+
+function test(i) {
+  while (--i > 0) {
+    decode(packet, BinaryDataPacket)
+  }
+}
 
 console.time('binary data')
-while (--i > 0) {
-  decode(packet, BinaryDataPacket)
-}
+test(count)
 console.timeEnd('binary data')

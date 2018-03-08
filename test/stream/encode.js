@@ -1,6 +1,6 @@
 const bl = require('bl')
 const sinon = require('sinon')
-const EncodeStream = require('lib/stream/encode')
+const EncodeStream = require('streams/encode')
 
 describe('encode', () => {
   const expectedNumber = 322

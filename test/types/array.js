@@ -1,5 +1,5 @@
 const sinon = require('sinon')
-const array = require('lib/types/array')
+const array = require('types/array')
 const common = require('testing/common')
 
 describe('array', () => {

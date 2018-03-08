@@ -1,9 +1,9 @@
-jest.mock('lib/stream/decode')
+jest.mock('streams/decode')
 
 const sinon = require('sinon')
-const reserved = require('lib/types/reserved')
+const reserved = require('types/reserved')
 const decode = require('lib/decode')
-const DecodeStream = require('lib/stream/decode')
+const DecodeStream = require('streams/decode')
 const common = require('testing/common')
 
 describe('decode', () => {

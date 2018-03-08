@@ -1,4 +1,4 @@
-const reserved = require('lib/types/reserved')
+const reserved = require('types/reserved')
 const sinon = require('sinon')
 const common = require('testing/common')
 
