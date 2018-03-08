@@ -380,7 +380,7 @@ describe('array', () => {
       callback.throws('callback')
 
       const enctype = array(type, callback)
-      const items = enctype.decode(rstream, expectedContext)
+      const items = enctype.decode.call(expectedContext, rstream)
 
       expect(Array.isArray(items)).toBeTruthy()
       expect(items.length).toBe(expectLength)
@@ -421,7 +421,7 @@ describe('array', () => {
       callback.throws('callback')
 
       const enctype = array(type, callback, 'bytes')
-      const items = enctype.decode(rstream, expectedContext)
+      const items = enctype.decode.call(expectedContext, rstream)
 
       expect(Array.isArray(items)).toBeTruthy()
       expect(items.length).toBe(count)

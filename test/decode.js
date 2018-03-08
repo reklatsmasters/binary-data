@@ -1,10 +1,10 @@
-jest.mock('lib/types/reserved')
 jest.mock('lib/stream/decode')
 
 const sinon = require('sinon')
-const { Reserved } = require('lib/types/reserved')
+const reserved = require('lib/types/reserved')
 const decode = require('lib/decode')
 const DecodeStream = require('lib/stream/decode')
+const common = require('testing/common')
 
 describe('decode', () => {
   test('should use schema', () => {
@@ -41,17 +41,16 @@ describe('decode', () => {
 
   test('should skip reserved field', () => {
     const rstream = {}
-
-    const reserved = new Reserved()
-    sinon.stub(reserved, 'decode')
-    expect(reserved.isMock).toBe(true)
+    const type = common.makeType()
 
     const schema = {
       a: {
         decode: sinon.stub(),
       },
-      b: reserved,
+      b: reserved(type, 1),
     }
+
+    sinon.stub(schema.b, 'decode')
 
     const expectedResult = {
       a: 1,
@@ -87,9 +86,9 @@ describe('decode', () => {
       },
     }
 
-    function xdecode(rstream_, context_) {
+    function xdecode(rstream_) {
       expect(rstream_).toBe(rstream)
-      expect(context_).toEqual(context)
+      expect(this).toEqual(context)
       called = true
     }
 
@@ -143,18 +142,7 @@ describe('decode', () => {
       c: value,
     }
 
-    const context1 = {
-      node: {
-        a: expectedResult.a,
-      },
-    }
-
-    const context2 = {
-      node: {},
-    }
-
-    decodeType.withArgs(rstream, context1).returns(value)
-    decodeType.withArgs(rstream, context2).returns(value)
+    decodeType.withArgs(rstream).returns(value)
     decodeType.throws('decodeType')
     decodeType.bytes = 7
 

@@ -157,7 +157,7 @@ describe('buffer', () => {
       callback.throws('callback')
 
       const type = buffer(callback)
-      const result = type.decode(rstream, context)
+      const result = type.decode.call(context, rstream)
 
       expect(result).toBe(buf)
       expect(readBuffer.callCount).toBe(1)

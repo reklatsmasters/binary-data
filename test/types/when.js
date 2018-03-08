@@ -76,11 +76,11 @@ describe('when', () => {
     condition.withArgs(context).returns(expectedStatus)
     condition.throws('condition')
 
-    type.decode.withArgs(rstream, context).returns(expectedResult)
+    type.decode.withArgs(rstream).returns(expectedResult)
     common.plug(type)
 
     const whenType = when(condition, type)
-    const result = whenType.decode(rstream, context)
+    const result = whenType.decode.call(context, rstream)
 
     expect(result).toEqual(expectedResult)
     expect(condition.callCount).toEqual(1)
@@ -104,11 +104,11 @@ describe('when', () => {
     condition.withArgs(context).returns(expectedStatus)
     condition.throws('condition')
 
-    type.decode.withArgs(rstream, context).returns(123)
+    type.decode.withArgs(rstream).returns(123)
     common.plug(type)
 
     const whenType = when(condition, type)
-    const result = whenType.decode(rstream, context)
+    const result = whenType.decode.call(context, rstream)
 
     expect(result).toEqual(expectedResult)
     expect(condition.callCount).toEqual(1)

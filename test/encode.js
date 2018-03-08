@@ -1,10 +1,15 @@
-jest.mock('lib/types/reserved')
-
 const sinon = require('sinon')
-const { Reserved } = require('lib/types/reserved')
+const reserved = require('lib/types/reserved')
 const encode = require('lib/encode')
+const common = require('testing/common')
 
 describe('encode', () => {
+  const type = common.makeType()
+
+  afterEach(() => {
+    common.reset(type)
+  })
+
   test('should encode objects using schema', () => {
     const wstream = {}
 
@@ -44,16 +49,14 @@ describe('encode', () => {
   test('should encode reserved fields', () => {
     const wstream = {}
 
-    const reserved = new Reserved()
-    sinon.stub(reserved, 'encode')
-    expect(reserved.isMock).toBe(true)
-
     const schema = {
       a: {
         encode: sinon.stub(),
       },
-      b: reserved,
+      b: reserved(type, 1),
     }
+
+    sinon.stub(schema.b, 'encode')
 
     const obj = {
       a: 100,

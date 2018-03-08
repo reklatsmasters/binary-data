@@ -1,5 +1,3 @@
-jest.unmock('lib/types/reserved')
-
 const reserved = require('lib/types/reserved')
 const sinon = require('sinon')
 const common = require('testing/common')
@@ -52,7 +50,7 @@ describe('reserved', () => {
     common.plug(lowtype)
 
     const type = reserved(lowtype, callback)
-    const result = type.decode(rstream, context)
+    const result = type.decode.call(context, rstream)
 
     expect(result).toBe(void 0)
     expect(callback.callCount).toBe(1)
