@@ -64,3 +64,6 @@ typings/
 .vscode
 *sublime*
 
+# perf
+
+perf.data*
