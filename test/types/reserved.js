@@ -21,41 +21,36 @@ describe('reserved', () => {
     expect(lowtype.encode.callCount).toBe(size)
     expect(type.encode.bytes).toBe(lowtype.encode.bytes * size)
   })
-
-  test('decode', () => {
-    const size = 2
-    const type = reserved(lowtype, size)
-    const rstream = {}
-
-    lowtype.decode.withArgs(rstream).returns(1)
-    common.plug(lowtype)
-
-    const result = type.decode(rstream)
-    expect(result).toBe(void 0)
-    expect(type.decode.bytes).toBe(lowtype.decode.bytes * size)
-    expect(lowtype.decode.callCount).toBe(size)
-  })
-
   test('should decode when `size` is function', () => {
     const callback = sinon.stub()
+    const bytes = 10
 
     const size = 2
     const rstream = {}
     const context = { node: {} }
 
+    const meta = {
+      context,
+      bytes: 0
+    }
+
     callback.withArgs(context).returns(size)
     callback.throws('callback')
 
-    lowtype.decode.withArgs(rstream).returns(1)
-    common.plug(lowtype)
+    const lowtype = {
+      decode(rstream, meta) {
+        meta.bytes += bytes
+        return 200
+      },
+      encode() {}
+    }
 
     const type = reserved(lowtype, callback)
-    const result = type.decode.call(context, rstream)
+    const result = type.decode(rstream, meta)
 
     expect(result).toBe(void 0)
     expect(callback.callCount).toBe(1)
-    expect(type.decode.bytes).toBe(lowtype.decode.bytes * size)
-    expect(lowtype.decode.callCount).toBe(size)
+    expect(meta.bytes).toBe(bytes * size)
   })
 
   test('should encode when `size` is function', () => {

@@ -8,7 +8,7 @@ describe('array', () => {
 
   const type = common.makeType()
 
-  beforeEach(() => {
+  afterEach(() => {
     common.reset(type)
   })
 
@@ -67,27 +67,39 @@ describe('array', () => {
       const first = 1
       const second = 2
 
-      const bytes = 2
+      const bytes = 10
 
-      type.decode
-        .withArgs(rstream)
-        .onFirstCall()
-        .returns(first)
-        .onSecondCall()
-        .returns(second)
+      const meta = {
+        bytes: 0,
+        context: null
+      }
 
-      common.plug(type, bytes)
+      let calls = 0
+
+      function fake(r, m) {
+        m.bytes += bytes;
+
+        switch(++calls) {
+          case 1: return first
+          case 2: return second
+        }
+      }
+
+      const type = {
+        decode: fake,
+        encode() {}
+      }
 
       const enctype = array(type, length)
-      const items = enctype.decode(rstream)
+      const items = enctype.decode(rstream, meta)
 
-      expect(Array.isArray(items)).toBeTruthy()
-      expect(items.length).toBe(length)
+      expect(Array.isArray(items)).toBe(true)
+      expect(items.length).toEqual(length)
 
       expect(items[0]).toBe(first)
       expect(items[1]).toBe(second)
 
-      expect(enctype.decode.bytes).toBe(bytes * length)
+      expect(meta.bytes).toBe(bytes * length)
     })
 
     test('decode if length in bytes', () => {
@@ -98,25 +110,37 @@ describe('array', () => {
       const first = 1
       const second = 2
 
-      type.decode
-        .withArgs(rstream)
-        .onFirstCall()
-        .returns(first)
-        .onSecondCall()
-        .returns(second)
+      const meta = {
+        bytes: 0,
+        context: null
+      }
 
-      common.plug(type, bytes)
+      let calls = 0
+
+      function fake(r, m) {
+        m.bytes += bytes;
+
+        switch(++calls) {
+          case 1: return first
+          case 2: return second
+        }
+      }
+
+      const type = {
+        decode: fake,
+        encode() {}
+      }
 
       const enctype = array(type, length, 'bytes')
-      const items = enctype.decode(rstream)
+      const items = enctype.decode(rstream, meta)
 
-      expect(Array.isArray(items)).toBeTruthy()
-      expect(items.length).toBe(count)
+      expect(Array.isArray(items)).toBe(true)
+      expect(items.length).toEqual(count)
 
       expect(items[0]).toBe(first)
       expect(items[1]).toBe(second)
 
-      expect(enctype.decode.bytes).toBe(length)
+      expect(meta.bytes).toBe(length)
     })
 
     test('encodingLength', () => {
@@ -185,34 +209,42 @@ describe('array', () => {
 
       const bytes = 2
 
-      lengthType.decode.withArgs(rstream).returns(length)
-      common.plug(lengthType, 3)
+      const meta = {
+        bytes: 0,
+        context: null
+      }
 
-      type.decode
-        .withArgs(rstream)
-        .onFirstCall()
-        .returns(first)
-        .onSecondCall()
-        .returns(second)
+      let calls = 0
 
-      common.plug(type, bytes)
+      function fake(r, m) {
+        m.bytes += bytes;
+
+        switch(++calls) {
+          case 1: return first
+          case 2: return second
+        }
+      }
+
+      const type = {
+        decode: fake,
+        encode() {}
+      }
+
+      const lengthType = {
+        decode(r, m) { m.bytes += bytes; return length },
+        encode() {}
+      }
 
       const enctype = array(type, lengthType)
-      const items = enctype.decode(rstream)
+      const items = enctype.decode(rstream, meta)
 
       expect(Array.isArray(items)).toBeTruthy()
       expect(items.length).toBe(length)
 
-      expect(lengthType.decode.callCount).toBe(1)
-      expect(type.decode.callCount).toBe(items.length)
-
       expect(items[0]).toBe(first)
       expect(items[1]).toBe(second)
 
-      expect(enctype.decode.bytes).toBe(
-        bytes * length + lengthType.decode.bytes
-      )
-      expect(lengthType.decode.calledBefore(type.decode)).toBeTruthy()
+      expect(meta.bytes).toBe(bytes * length + bytes)
     })
 
     test('encodingLength', () => {
@@ -319,36 +351,46 @@ describe('array', () => {
         const bytes = 2
         const lengthBytes = 3
 
-        lengthType.decode.withArgs(rstream).returns(length)
-        common.plug(lengthType, lengthBytes)
-
-        const schema = {
-          a: common.makeType(),
+        const meta = {
+          bytes: 0,
+          context: null
         }
 
-        schema.a.decode
-          .withArgs(rstream)
-          .onFirstCall()
-          .returns(first)
-          .onSecondCall()
-          .returns(second)
+        let calls = 0
 
-        common.plug(schema.a, bytes)
+        function fake(r, m) {
+          m.bytes += bytes;
+
+          switch(++calls) {
+            case 1: return first
+            case 2: return second
+          }
+        }
+
+        const type = {
+          decode: fake,
+          encode() {}
+        }
+
+        const lengthType = {
+          decode(r, m) { m.bytes += lengthBytes; return length },
+          encode() {}
+        }
+
+        const schema = {
+          a: type
+        }
 
         const enctype = array(schema, lengthType)
-        const items = enctype.decode(rstream)
+        const items = enctype.decode(rstream, meta)
 
-        expect(Array.isArray(items)).toBeTruthy()
-        expect(items.length).toBe(length)
-
-        expect(lengthType.decode.callCount).toBe(1)
-        expect(schema.a.decode.callCount).toBe(items.length)
+        expect(Array.isArray(items)).toBe(true)
+        expect(items.length).toEqual(length)
 
         expect(items[0]).toEqual({ a: first })
         expect(items[1]).toEqual({ a: second })
 
-        expect(enctype.decode.bytes).toBe(bytes * length + lengthBytes)
-        expect(lengthType.decode.calledBefore(type.decode)).toBeTruthy()
+        expect(meta.bytes).toBe(bytes * length + lengthBytes)
       })
     })
   })
@@ -365,14 +407,26 @@ describe('array', () => {
       const first = 1
       const second = 2
 
-      type.decode
-        .withArgs(rstream)
-        .onFirstCall()
-        .returns(first)
-        .onSecondCall()
-        .returns(second)
+      const meta = {
+        bytes: 0,
+        context: expectedContext
+      }
 
-      common.plug(type, bytes)
+      let calls = 0
+
+      function fake(r, m) {
+        m.bytes += bytes;
+
+        switch(++calls) {
+          case 1: return first
+          case 2: return second
+        }
+      }
+
+      const type = {
+        decode: fake,
+        encode() {}
+      }
 
       const callback = sinon.stub()
 
@@ -380,19 +434,17 @@ describe('array', () => {
       callback.throws('callback')
 
       const enctype = array(type, callback)
-      const items = enctype.decode.call(expectedContext, rstream)
+      const items = enctype.decode(rstream, meta)
 
-      expect(Array.isArray(items)).toBeTruthy()
-      expect(items.length).toBe(expectLength)
+      expect(Array.isArray(items)).toBe(true)
+      expect(items.length).toEqual(expectLength)
 
       expect(callback.callCount).toBe(1)
-      expect(type.decode.callCount).toBe(items.length)
 
       expect(items[0]).toBe(first)
       expect(items[1]).toBe(second)
 
-      expect(enctype.decode.bytes).toBe(bytes * expectLength)
-      expect(callback.calledBefore(type.decode)).toBeTruthy()
+      expect(meta.bytes).toBe(bytes * expectLength)
     })
 
     test('decode if length in bytes', () => {
@@ -407,33 +459,44 @@ describe('array', () => {
       const first = 1
       const second = 2
 
-      type.decode
-        .withArgs(rstream)
-        .onFirstCall()
-        .returns(first)
-        .onSecondCall()
-        .returns(second)
+      const meta = {
+        bytes: 0,
+        context: expectedContext
+      }
 
-      common.plug(type, bytes)
+      let calls = 0
+
+      function fake(r, m) {
+        m.bytes += bytes;
+
+        switch(++calls) {
+          case 1: return first
+          case 2: return second
+        }
+      }
+
+      const type = {
+        decode: fake,
+        encode() {}
+      }
+
       const callback = sinon.stub()
 
       callback.withArgs(expectedContext).returns(expectLength)
       callback.throws('callback')
 
       const enctype = array(type, callback, 'bytes')
-      const items = enctype.decode.call(expectedContext, rstream)
+      const items = enctype.decode(rstream, meta)
 
-      expect(Array.isArray(items)).toBeTruthy()
-      expect(items.length).toBe(count)
+      expect(Array.isArray(items)).toBe(true)
+      expect(items.length).toEqual(count)
 
       expect(callback.callCount).toBe(1)
-      expect(type.decode.callCount).toBe(items.length)
 
       expect(items[0]).toBe(first)
       expect(items[1]).toBe(second)
 
-      expect(enctype.decode.bytes).toBe(expectLength)
-      expect(callback.calledBefore(type.decode)).toBeTruthy()
+      expect(meta.bytes).toBe(expectLength)
     })
 
     test('encode', () => {

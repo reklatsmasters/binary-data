@@ -60,63 +60,6 @@ describe('when', () => {
     expect(whenType.encode.bytes).toEqual(0)
     expect(type.encode.callCount).toEqual(0)
   })
-
-  test('decode positive', () => {
-    const rstream = {}
-
-    const context = {
-      node: 1
-    }
-
-    const expectedResult = 123
-    const expectedStatus = true
-
-    const condition = sinon.stub()
-
-    condition.withArgs(context).returns(expectedStatus)
-    condition.throws('condition')
-
-    type.decode.withArgs(rstream).returns(expectedResult)
-    common.plug(type)
-
-    const whenType = when(condition, type)
-    const result = whenType.decode.call(context, rstream)
-
-    expect(result).toEqual(expectedResult)
-    expect(condition.callCount).toEqual(1)
-    expect(type.decode.callCount).toEqual(1)
-    expect(whenType.decode.bytes).toEqual(type.decode.bytes)
-    expect(whenType.decode.status).toEqual(expectedStatus)
-  })
-
-  test('decode negative', () => {
-    const rstream = {}
-
-    const context = {
-      node: 1
-    }
-
-    const expectedResult = null
-    const expectedStatus = false
-
-    const condition = sinon.stub()
-
-    condition.withArgs(context).returns(expectedStatus)
-    condition.throws('condition')
-
-    type.decode.withArgs(rstream).returns(123)
-    common.plug(type)
-
-    const whenType = when(condition, type)
-    const result = whenType.decode.call(context, rstream)
-
-    expect(result).toEqual(expectedResult)
-    expect(condition.callCount).toEqual(1)
-    expect(type.decode.callCount).toEqual(0)
-    expect(whenType.decode.bytes).toEqual(0)
-    expect(whenType.decode.status).toEqual(expectedStatus)
-  })
-
   test('encodingLength positive', () => {
     const value = 123
     const bytes = 10

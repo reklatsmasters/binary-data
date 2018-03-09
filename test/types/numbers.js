@@ -19,10 +19,14 @@ describe('doublebe', () => {
     const readDoubleBE = sinon.stub()
     readDoubleBE.returns(num)
 
-    const result = types.doublebe.decode({ readDoubleBE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.doublebe.decode({ readDoubleBE }, meta)
     expect(readDoubleBE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.doublebe.decode.bytes).toEqual(8)
+    expect(meta.bytes).toEqual(8)
   })
 
   it('size', () => {
@@ -48,10 +52,14 @@ describe('doublele', () => {
     const readDoubleLE = sinon.stub()
     readDoubleLE.returns(num)
 
-    const result = types.doublele.decode({ readDoubleLE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.doublele.decode({ readDoubleLE }, meta)
     expect(readDoubleLE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.doublele.decode.bytes).toEqual(8)
+    expect(meta.bytes).toEqual(8)
   })
 
   it('size', () => {
@@ -77,10 +85,14 @@ describe('floatbe', () => {
     const readFloatBE = sinon.stub()
     readFloatBE.returns(num)
 
-    const result = types.floatbe.decode({ readFloatBE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.floatbe.decode({ readFloatBE }, meta)
     expect(readFloatBE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.floatbe.decode.bytes).toEqual(4)
+    expect(meta.bytes).toEqual(4)
   })
 
   it('size', () => {
@@ -106,10 +118,14 @@ describe('floatle', () => {
     const readFloatLE = sinon.stub()
     readFloatLE.returns(num)
 
-    const result = types.floatle.decode({ readFloatLE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.floatle.decode({ readFloatLE }, meta)
     expect(readFloatLE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.floatle.decode.bytes).toEqual(4)
+    expect(meta.bytes).toEqual(4)
   })
 
   it('size', () => {
@@ -135,10 +151,14 @@ describe('int8', () => {
     const readInt8 = sinon.stub()
     readInt8.returns(num)
 
-    const result = types.int8.decode({ readInt8 })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.int8.decode({ readInt8 }, meta)
     expect(readInt8.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.int8.decode.bytes).toEqual(1)
+    expect(meta.bytes).toEqual(1)
   })
 
   it('size', () => {
@@ -164,10 +184,14 @@ describe('uint8', () => {
     const readUInt8 = sinon.stub()
     readUInt8.returns(num)
 
-    const result = types.uint8.decode({ readUInt8 })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.uint8.decode({ readUInt8 }, meta)
     expect(readUInt8.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.uint8.decode.bytes).toEqual(1)
+    expect(meta.bytes).toEqual(1)
   })
 
   it('size', () => {
@@ -193,10 +217,14 @@ describe('int16be', () => {
     const readInt16BE = sinon.stub()
     readInt16BE.returns(num)
 
-    const result = types.int16be.decode({ readInt16BE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.int16be.decode({ readInt16BE }, meta)
     expect(readInt16BE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.int16be.decode.bytes).toEqual(2)
+    expect(meta.bytes).toEqual(2)
   })
 
   it('size', () => {
@@ -222,10 +250,14 @@ describe('uint16be', () => {
     const readUInt16BE = sinon.stub()
     readUInt16BE.returns(num)
 
-    const result = types.uint16be.decode({ readUInt16BE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.uint16be.decode({ readUInt16BE }, meta)
     expect(readUInt16BE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.uint16be.decode.bytes).toEqual(2)
+    expect(meta.bytes).toEqual(2)
   })
 
   it('size', () => {
@@ -251,10 +283,14 @@ describe('int16le', () => {
     const readInt16LE = sinon.stub()
     readInt16LE.returns(num)
 
-    const result = types.int16le.decode({ readInt16LE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.int16le.decode({ readInt16LE }, meta)
     expect(readInt16LE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.int16le.decode.bytes).toEqual(2)
+    expect(meta.bytes).toEqual(2)
   })
 
   it('size', () => {
@@ -280,10 +316,14 @@ describe('uint16le', () => {
     const readUInt16LE = sinon.stub()
     readUInt16LE.returns(num)
 
-    const result = types.uint16le.decode({ readUInt16LE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.uint16le.decode({ readUInt16LE }, meta)
     expect(readUInt16LE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.uint16le.decode.bytes).toEqual(2)
+    expect(meta.bytes).toEqual(2)
   })
 
   it('size', () => {
@@ -309,10 +349,14 @@ describe('int32be', () => {
     const readInt32BE = sinon.stub()
     readInt32BE.returns(num)
 
-    const result = types.int32be.decode({ readInt32BE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.int32be.decode({ readInt32BE }, meta)
     expect(readInt32BE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.int32be.decode.bytes).toEqual(4)
+    expect(meta.bytes).toEqual(4)
   })
 
   it('size', () => {
@@ -338,10 +382,14 @@ describe('uint32be', () => {
     const readUInt32BE = sinon.stub()
     readUInt32BE.returns(num)
 
-    const result = types.uint32be.decode({ readUInt32BE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.uint32be.decode({ readUInt32BE }, meta)
     expect(readUInt32BE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.uint32be.decode.bytes).toEqual(4)
+    expect(meta.bytes).toEqual(4)
   })
 
   it('size', () => {
@@ -367,10 +415,14 @@ describe('int32le', () => {
     const readInt32LE = sinon.stub()
     readInt32LE.returns(num)
 
-    const result = types.int32le.decode({ readInt32LE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.int32le.decode({ readInt32LE }, meta)
     expect(readInt32LE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.int32le.decode.bytes).toEqual(4)
+    expect(meta.bytes).toEqual(4)
   })
 
   it('size', () => {
@@ -396,10 +448,14 @@ describe('uint32le', () => {
     const readUInt32LE = sinon.stub()
     readUInt32LE.returns(num)
 
-    const result = types.uint32le.decode({ readUInt32LE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.uint32le.decode({ readUInt32LE }, meta)
     expect(readUInt32LE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.uint32le.decode.bytes).toEqual(4)
+    expect(meta.bytes).toEqual(4)
   })
 
   it('size', () => {
@@ -428,10 +484,14 @@ describe('int24be', () => {
     readIntBE.withArgs(size).returns(num)
     readIntBE.throws('readIntBE')
 
-    const result = types.int24be.decode({ readIntBE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.int24be.decode({ readIntBE }, meta)
     expect(readIntBE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.int24be.decode.bytes).toEqual(size)
+    expect(meta.bytes).toEqual(size)
   })
 
   it('size', () => {
@@ -460,10 +520,14 @@ describe('uint24be', () => {
     readUIntBE.withArgs(size).returns(num)
     readUIntBE.throws('readIntBE')
 
-    const result = types.uint24be.decode({ readUIntBE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.uint24be.decode({ readUIntBE }, meta)
     expect(readUIntBE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.uint24be.decode.bytes).toEqual(size)
+    expect(meta.bytes).toEqual(size)
   })
 
   it('size', () => {
@@ -492,10 +556,14 @@ describe('int24le', () => {
     readIntLE.withArgs(size).returns(num)
     readIntLE.throws('readIntBE')
 
-    const result = types.int24le.decode({ readIntLE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.int24le.decode({ readIntLE }, meta)
     expect(readIntLE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.int24le.decode.bytes).toEqual(size)
+    expect(meta.bytes).toEqual(size)
   })
 
   it('size', () => {
@@ -524,10 +592,14 @@ describe('uint24le', () => {
     readUIntLE.withArgs(size).returns(num)
     readUIntLE.throws('readIntBE')
 
-    const result = types.uint24le.decode({ readUIntLE })
+    const meta = {
+      bytes: 0
+    }
+
+    const result = types.uint24le.decode({ readUIntLE }, meta)
     expect(readUIntLE.callCount).toEqual(1)
     expect(result).toEqual(num)
-    expect(types.uint24le.decode.bytes).toEqual(size)
+    expect(meta.bytes).toEqual(size)
   })
 
   it('size', () => {

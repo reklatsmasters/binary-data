@@ -36,30 +36,48 @@ describe('bool', () => {
 
   test('decode true', () => {
     const rstream = {}
+    const bytes = 10
 
-    lowtype.decode.withArgs(rstream).returns(322)
-    common.plug(lowtype)
+    const lowtype = {
+      decode(rstream, meta) {
+        meta.bytes += bytes
+        return 200
+      },
+      encode() {}
+    }
+
+    const meta = {
+      bytes: 0
+    }
 
     const type = bool(lowtype)
-    const result = type.decode(rstream)
+    const result = type.decode(rstream, meta)
 
     expect(result).toBe(true)
-    expect(lowtype.decode.callCount).toBe(1)
-    expect(type.decode.bytes).toBe(lowtype.decode.bytes)
+    expect(meta.bytes).toBe(bytes)
   })
 
   test('decode false', () => {
     const rstream = {}
+    const bytes = 10
 
-    lowtype.decode.withArgs(rstream).returns(0)
-    common.plug(lowtype)
+    const lowtype = {
+      decode(rstream, meta) {
+        meta.bytes += bytes
+        return 0
+      },
+      encode() {}
+    }
+
+    const meta = {
+      bytes: 0
+    }
 
     const type = bool(lowtype)
-    const result = type.decode(rstream)
+    const result = type.decode(rstream, meta)
 
     expect(result).toBe(false)
-    expect(lowtype.decode.callCount).toBe(1)
-    expect(type.decode.bytes).toBe(lowtype.decode.bytes)
+    expect(meta.bytes).toBe(bytes)
   })
 
   test('encodingLength', () => {

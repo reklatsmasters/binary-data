@@ -43,6 +43,10 @@ describe('buffer', () => {
         readBuffer,
       }
 
+      const meta = {
+        bytes: 0
+      }
+
       const length = 2
       const buf = Buffer.allocUnsafe(length)
 
@@ -50,11 +54,11 @@ describe('buffer', () => {
       readBuffer.throws('readBuffer')
 
       const type = buffer(length)
-      const result = type.decode(rstream)
+      const result = type.decode(rstream, meta)
 
       expect(result).toBe(buf)
       expect(readBuffer.callCount).toBe(1)
-      expect(type.decode.bytes).toBe(length)
+      expect(meta.bytes).toBe(length)
     })
 
     test('encodingLength', () => {
@@ -94,6 +98,7 @@ describe('buffer', () => {
 
     test('decode', () => {
       const readBuffer = sinon.stub()
+      const bytes = 5
 
       const rstream = {
         readBuffer,
@@ -105,19 +110,24 @@ describe('buffer', () => {
       readBuffer.withArgs(length).returns(buf)
       readBuffer.throws('readBuffer')
 
-      const lengthType = common.makeType()
+      const meta = {
+        bytes: 0
+      }
 
-      lengthType.decode.withArgs(rstream).returns(length)
-      common.plug(lengthType)
+      const lengthType = {
+        decode(rstream, meta) {
+          meta.bytes += bytes
+          return length
+        },
+        encode() {}
+      }
 
       const type = buffer(lengthType)
-      const result = type.decode(rstream)
+      const result = type.decode(rstream, meta)
 
       expect(result).toBe(buf)
       expect(readBuffer.callCount).toBe(1)
-      expect(lengthType.decode.callCount).toBe(1)
-      expect(lengthType.decode.calledBefore(readBuffer)).toBeTruthy()
-      expect(type.decode.bytes).toBe(buf.length + lengthType.decode.bytes)
+      expect(meta.bytes).toBe(buf.length + bytes)
     })
 
     test('encodingLength', () => {
@@ -149,6 +159,11 @@ describe('buffer', () => {
         node: {},
       }
 
+      const meta = {
+        bytes: 0,
+        context
+      }
+
       readBuffer.withArgs(length).returns(buf)
       readBuffer.throws('readBuffer')
 
@@ -157,12 +172,12 @@ describe('buffer', () => {
       callback.throws('callback')
 
       const type = buffer(callback)
-      const result = type.decode.call(context, rstream)
+      const result = type.decode(rstream, meta)
 
       expect(result).toBe(buf)
       expect(readBuffer.callCount).toBe(1)
       expect(callback.callCount).toBe(1)
-      expect(type.decode.bytes).toBe(length)
+      expect(meta.bytes).toBe(length)
     })
 
     test('encode', () => {
