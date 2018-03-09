@@ -67,3 +67,7 @@ typings/
 # perf
 
 perf.data*
+
+# lock files
+package-lock.json
+yarn.lock
