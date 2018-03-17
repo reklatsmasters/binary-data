@@ -80,6 +80,7 @@ describe('decode', () => {
 
     const context = {
       node: {},
+      currentNode: {}
     }
 
     let called = false
