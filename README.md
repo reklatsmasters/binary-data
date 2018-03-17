@@ -258,6 +258,18 @@ const schema = {
 }
 ```
 
+### `select(when, ..., defaultType)`
+
+The second type for conditions. The same as `switch` operator in js. Argument `defaultType` may be any known
+*type* excluding user *schemas*.
+
+```js
+const schema = {
+  id: uint8,
+  payload: select(when(({ node }) => node.id === 1, string(uint16be)), buffer(uint16be))
+}
+```
+
 ## License
 
 MIT, 2017 (c) Dmitriy Tsvettsikh

@@ -7,6 +7,7 @@ const reserved = require('types/reserved')
 const string = require('types/string')
 const numbers = require('types/numbers')
 const when = require('types/when')
+const select = require('types/select')
 
 const encode = require('lib/encode')
 const { decode } = require('lib/decode')
@@ -18,7 +19,8 @@ const types = {
   buffer,
   reserved,
   string,
-  when
+  when,
+  select
 }
 
 for (const type of Object.keys(numbers)) {
