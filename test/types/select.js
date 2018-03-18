@@ -1,5 +1,6 @@
 const when = require('types/when')
 const select = require('types/select')
+const symbols = require('internal/symbols')
 
 describe('select', () => {
   const defaultValue = 322
@@ -45,6 +46,7 @@ describe('select', () => {
 
     expect(type.decode({}, meta)).toEqual(firstValue)
     expect(meta.bytes).toEqual(firstBytes)
+    expect(type[symbols.skip]).toEqual(false)
   })
 
   test('decode second option', () => {
@@ -57,6 +59,7 @@ describe('select', () => {
 
     expect(type.decode({}, meta)).toEqual(secondValue)
     expect(meta.bytes).toEqual(secondBytes)
+    expect(type[symbols.skip]).toEqual(false)
   })
 
   test('decode default option', () => {
@@ -69,5 +72,22 @@ describe('select', () => {
 
     expect(type.decode({}, meta)).toEqual(defaultValue)
     expect(meta.bytes).toEqual(defaultBytes)
+    expect(type[symbols.skip]).toEqual(false)
+  })
+
+  test('skip after decode', () => {
+    const meta = {
+      bytes: 0,
+      context: true
+    }
+
+    const type = select(when((context) => context, firstType), when((context) => context, secondType))
+    type.decode({}, meta)
+
+    meta.bytes = 0
+    meta.context = false
+    expect(type.decode({}, meta)).toBe(undefined)
+    expect(meta.bytes).toEqual(0)
+    expect(type[symbols.skip]).toEqual(true)
   })
 })
