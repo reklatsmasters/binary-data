@@ -38,7 +38,7 @@
     "is-plain-object": "^2.0.3"
   },
   "devDependencies": {
-    "jest": "^20.0.4",
+    "jest": "^22.4.3",
     "sinon": "^4.4.2",
     "xo": "^0.18.2"
   },
