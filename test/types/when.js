@@ -1,84 +1,129 @@
-const sinon = require('sinon')
 const when = require('types/when')
 const common = require('testing/common')
+const symbols = require('internal/symbols')
 
 describe('when', () => {
-  const type = common.makeType()
-
-  beforeEach(() => {
-    common.reset(type)
-  })
-
   test('encode positive', () => {
+    const childBytes = 3
+    const childValue = 12
     const wstream = {}
-    const value = 123
-    const expectedStatus = true
 
-    const context = {
-      node: 1
+    const childType = {
+      encode: jest.fn().mockImplementation(() => { childType.encode.bytes = childBytes }),
+      decode() {}
     }
 
-    const condition = sinon.stub()
+    const context = {}
 
-    condition.withArgs(context).returns(expectedStatus)
-    condition.throws('condition')
+    const type = when(() => true, childType)
 
-    type.encode.withArgs(value, wstream, context).returns(1)
-    common.plug(type)
+    type.encode(childValue, wstream, context)
 
-    const whenType = when(condition, type)
-    whenType.encode(value, wstream, context)
-
-    expect(condition.callCount).toEqual(1)
-    expect(whenType.encode.status).toEqual(expectedStatus)
-    expect(whenType.encode.bytes).toEqual(type.encode.bytes)
-    expect(type.encode.callCount).toEqual(1)
+    expect(type.encode.bytes).toEqual(childBytes)
+    expect(type.encode.status).toEqual(true)
+    expect(childType.encode).toHaveBeenCalledTimes(1)
   })
 
   test('encode negative', () => {
+    const childBytes = 3
+    const childValue = 12
     const wstream = {}
-    const value = 123
-    const expectedStatus = false
 
-    const context = {
-      node: 1
+    const childType = {
+      encode: jest.fn().mockImplementation(() => { childType.encode.bytes = childBytes }),
+      decode() {}
     }
 
-    const condition = sinon.stub()
+    const context = {}
 
-    condition.withArgs(context).returns(expectedStatus)
-    condition.throws('condition')
+    const type = when(() => false, childType)
 
-    type.encode.withArgs(value, wstream, context).returns(1)
-    common.plug(type)
+    type.encode(childValue, wstream, context)
 
-    const whenType = when(condition, type)
-    whenType.encode(value, wstream, context)
-
-    expect(condition.callCount).toEqual(1)
-    expect(whenType.encode.status).toEqual(expectedStatus)
-    expect(whenType.encode.bytes).toEqual(0)
-    expect(type.encode.callCount).toEqual(0)
+    expect(type.encode.bytes).toEqual(0)
+    expect(type.encode.status).toEqual(false)
+    expect(childType.encode).toHaveBeenCalledTimes(0)
   })
+
   test('encodingLength positive', () => {
     const value = 123
     const bytes = 10
 
-    type.encodingLength.withArgs(value).returns(bytes)
-    common.plug(type)
+    const childType = {
+      decode() {},
+      encode() {},
+      encodingLength() {
+        return bytes
+      }
+    }
 
-    const whenType = when(() => true, type)
-    expect(whenType.encodingLength(value)).toBe(bytes)
+    const type = when(() => true, childType)
+
+    expect(type.encodingLength(value)).toBe(bytes)
   })
 
   test('encodingLength negative', () => {
     const value = 123
     const bytes = 10
 
-    type.encodingLength.withArgs(value).returns(bytes)
-    common.plug(type)
+    const childType = {
+      decode() {},
+      encode() {},
+      encodingLength() {
+        return bytes
+      }
+    }
 
-    const whenType = when(() => false, type)
-    expect(whenType.encodingLength(value)).toBe(bytes)
+    const type = when(() => false, childType)
+
+    expect(type.encodingLength(value)).toBe(bytes)
+  })
+
+  test('decode positive', () => {
+    const childBytes = 3
+    const childValue = 12
+
+    const childType = {
+      decode(r, meta) {
+        meta.bytes += childBytes
+        return childValue
+      },
+      encode() {}
+    }
+
+    const meta = {
+      bytes: 0,
+      context: {}
+    }
+
+    const type = when(() => true, childType)
+
+    expect(type.decode({}, meta)).toEqual(childValue)
+    expect(meta.bytes).toEqual(childBytes)
+    expect(type[symbols.skip]).toEqual(false)
+  })
+
+  test('decode negative', () => {
+    const childBytes = 3
+    const childValue = 12
+
+    const childType = {
+      decode(r, meta) {
+        meta.bytes += childBytes
+        return childValue
+      },
+      encode() {}
+    }
+
+    const meta = {
+      bytes: 0,
+      context: {}
+    }
+
+    const type = when(() => false, childType)
+
+    expect(type.decode({}, meta)).toEqual(undefined)
+    expect(meta.bytes).toEqual(0)
+    expect(type[symbols.skip]).toEqual(true)
   })
 })

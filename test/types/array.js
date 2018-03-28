@@ -77,9 +77,9 @@ describe('array', () => {
       let calls = 0
 
       function fake(r, m) {
-        m.bytes += bytes;
+        m.bytes += bytes
 
-        switch(++calls) {
+        switch (++calls) {
           case 1: return first
           case 2: return second
         }
@@ -118,9 +118,9 @@ describe('array', () => {
       let calls = 0
 
       function fake(r, m) {
-        m.bytes += bytes;
+        m.bytes += bytes
 
-        switch(++calls) {
+        switch (++calls) {
           case 1: return first
           case 2: return second
         }
@@ -157,17 +157,21 @@ describe('array', () => {
     })
 
     test('encodingLength # length in bytes', () => {
-      const obj = [10, 20]
+      const items = [10, 20]
       const bytes = 3
-      const length = obj.length * bytes
+      const length = items.length * bytes
 
-      type.encodingLength.withArgs(obj[0]).returns(bytes)
-      type.encodingLength.withArgs(obj[1]).returns(bytes)
-      common.plug(type, bytes)
+      const itemType = {
+        encode() {},
+        decode() {},
+        encodingLength() {
+          return bytes
+        }
+      }
 
-      const schema = array(type, length, 'bytes')
+      const type = array(itemType, length, 'bytes')
 
-      expect(schema.encodingLength(obj)).toBe(length)
+      expect(type.encodingLength(items)).toBe(length)
     })
   })
 
@@ -217,9 +221,9 @@ describe('array', () => {
       let calls = 0
 
       function fake(r, m) {
-        m.bytes += bytes;
+        m.bytes += bytes
 
-        switch(++calls) {
+        switch (++calls) {
           case 1: return first
           case 2: return second
         }
@@ -231,7 +235,9 @@ describe('array', () => {
       }
 
       const lengthType = {
-        decode(r, m) { m.bytes += bytes; return length },
+        decode(r, m) {
+          m.bytes += bytes; return length
+        },
         encode() {}
       }
 
@@ -325,7 +331,7 @@ describe('array', () => {
         common.plug(lengthType, lengthBytes)
 
         const schema = {
-          a: common.makeType(),
+          a: common.makeType()
         }
 
         schema.a.encode.withArgs(items[0].a, wstream).returns(1)
@@ -345,50 +351,53 @@ describe('array', () => {
       test('decode', () => {
         const length = 2
 
-        const first = 1
-        const second = 2
+        const firstItem = 1
+        const secondItem = 2
 
         const bytes = 2
         const lengthBytes = 3
 
         const meta = {
           bytes: 0,
-          context: null
+          context: {}
         }
 
         let calls = 0
 
-        function fake(r, m) {
-          m.bytes += bytes;
+        function decodeItem(r, m) {
+          m.bytes += bytes
 
-          switch(++calls) {
-            case 1: return first
-            case 2: return second
+          switch (++calls) {
+            case 1: return firstItem
+            case 2: return secondItem
           }
         }
 
-        const type = {
-          decode: fake,
+        const itemType = {
+          decode: decodeItem,
           encode() {}
         }
 
         const lengthType = {
-          decode(r, m) { m.bytes += lengthBytes; return length },
+          decode(r, m) {
+            m.bytes += lengthBytes;
+            return length
+          },
           encode() {}
         }
 
         const schema = {
-          a: type
+          a: itemType
         }
 
-        const enctype = array(schema, lengthType)
-        const items = enctype.decode(rstream, meta)
+        const type = array(schema, lengthType)
+        const items = type.decode(rstream, meta)
 
         expect(Array.isArray(items)).toBe(true)
         expect(items.length).toEqual(length)
 
-        expect(items[0]).toEqual({ a: first })
-        expect(items[1]).toEqual({ a: second })
+        expect(items[0]).toEqual({ a: firstItem })
+        expect(items[1]).toEqual({ a: secondItem })
 
         expect(meta.bytes).toBe(bytes * length + lengthBytes)
       })
@@ -398,7 +407,7 @@ describe('array', () => {
   describe('length function', () => {
     test('decode', () => {
       const expectedContext = {
-        node: {},
+        node: {}
       }
 
       const expectLength = 2
@@ -415,9 +424,9 @@ describe('array', () => {
       let calls = 0
 
       function fake(r, m) {
-        m.bytes += bytes;
+        m.bytes += bytes
 
-        switch(++calls) {
+        switch (++calls) {
           case 1: return first
           case 2: return second
         }
@@ -449,7 +458,7 @@ describe('array', () => {
 
     test('decode if length in bytes', () => {
       const expectedContext = {
-        node: {},
+        node: {}
       }
 
       const bytes = 2
@@ -467,9 +476,9 @@ describe('array', () => {
       let calls = 0
 
       function fake(r, m) {
-        m.bytes += bytes;
+        m.bytes += bytes
 
-        switch(++calls) {
+        switch (++calls) {
           case 1: return first
           case 2: return second
         }
@@ -503,7 +512,7 @@ describe('array', () => {
       const items = [100, 200, 300]
 
       const context = {
-        node: {},
+        node: {}
       }
 
       const bytes = 4
@@ -529,7 +538,7 @@ describe('array', () => {
       const items = [100, 200, 300]
 
       const context = {
-        node: {},
+        node: {}
       }
 
       const bytes = 4
