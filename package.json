@@ -4,7 +4,7 @@
   "description": "Declarative encoder/decoder of various binary data.",
   "main": "src/index.js",
   "scripts": {
-    "lint": "xo",
+    "lint": "eslint .",
     "cover": "jest --coverage",
     "test": "npm run lint && jest",
     "test-ci": "npm run lint && npm run cover"
@@ -38,9 +38,18 @@
     "is-plain-object": "^2.0.3"
   },
   "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-xo-space": "^0.18.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-no-use-extend-native": "^0.3.12",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-promise": "^3.7.0",
+    "eslint-plugin-unicorn": "^4.0.2",
     "jest": "^22.4.3",
-    "sinon": "^4.4.2",
-    "xo": "^0.18.2"
+    "prettier": "^1.11.1",
+    "sinon": "^4.4.2"
   },
   "jest": {
     "modulePaths": [
@@ -53,21 +62,6 @@
     "coveragePathIgnorePatterns": [
       "/test/",
       "/testing/"
-    ]
-  },
-  "xo": {
-    "semicolon": false,
-    "space": 2,
-    "rules": {
-      "object-curly-spacing": [
-        "error",
-        "always"
-      ],
-      "import/no-extraneous-dependencies": "off"
-    },
-    "ignores": [
-      "**/test/**",
-      "!src/node_modules/**"
     ]
   }
 }

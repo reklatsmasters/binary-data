@@ -44,7 +44,7 @@ describe('buffer', () => {
       }
 
       const meta = {
-        bytes: 0
+        bytes: 0,
       }
 
       const length = 2
@@ -111,7 +111,7 @@ describe('buffer', () => {
       readBuffer.throws('readBuffer')
 
       const meta = {
-        bytes: 0
+        bytes: 0,
       }
 
       const lengthType = {
@@ -119,7 +119,7 @@ describe('buffer', () => {
           meta.bytes += bytes
           return length
         },
-        encode() {}
+        encode() {},
       }
 
       const type = buffer(lengthType)
@@ -161,7 +161,7 @@ describe('buffer', () => {
 
       const meta = {
         bytes: 0,
-        context
+        context,
       }
 
       readBuffer.withArgs(length).returns(buf)

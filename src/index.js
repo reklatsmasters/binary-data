@@ -20,7 +20,7 @@ const types = {
   reserved,
   string,
   when,
-  select
+  select,
 }
 
 for (const type of Object.keys(numbers)) {
@@ -58,5 +58,5 @@ module.exports = {
 
   /* Re-export utils */
   EncodeStream,
-  DecodeStream
+  DecodeStream,
 }

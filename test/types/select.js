@@ -11,7 +11,7 @@ describe('select', () => {
       meta.bytes += defaultBytes
       return defaultValue
     },
-    encode() {}
+    encode() {},
   }
 
   const firstValue = 111
@@ -22,7 +22,7 @@ describe('select', () => {
       meta.bytes += firstBytes
       return firstValue
     },
-    encode() {}
+    encode() {},
   }
 
   const secondValue = 222
@@ -33,16 +33,20 @@ describe('select', () => {
       meta.bytes += secondBytes
       return secondValue
     },
-    encode() {}
+    encode() {},
   }
 
   test('decode first option', () => {
     const meta = {
       bytes: 0,
-      context: {}
+      context: {},
     }
 
-    const type = select(when(() => true, firstType), when(() => false, secondType), defaultType)
+    const type = select(
+      when(() => true, firstType),
+      when(() => false, secondType),
+      defaultType
+    )
 
     expect(type.decode({}, meta)).toEqual(firstValue)
     expect(meta.bytes).toEqual(firstBytes)
@@ -52,10 +56,14 @@ describe('select', () => {
   test('decode second option', () => {
     const meta = {
       bytes: 0,
-      context: {}
+      context: {},
     }
 
-    const type = select(when(() => false, firstType), when(() => true, secondType), defaultType)
+    const type = select(
+      when(() => false, firstType),
+      when(() => true, secondType),
+      defaultType
+    )
 
     expect(type.decode({}, meta)).toEqual(secondValue)
     expect(meta.bytes).toEqual(secondBytes)
@@ -65,10 +73,14 @@ describe('select', () => {
   test('decode default option', () => {
     const meta = {
       bytes: 0,
-      context: {}
+      context: {},
     }
 
-    const type = select(when(() => false, firstType), when(() => false, secondType), defaultType)
+    const type = select(
+      when(() => false, firstType),
+      when(() => false, secondType),
+      defaultType
+    )
 
     expect(type.decode({}, meta)).toEqual(defaultValue)
     expect(meta.bytes).toEqual(defaultBytes)
@@ -78,10 +90,13 @@ describe('select', () => {
   test('skip after decode', () => {
     const meta = {
       bytes: 0,
-      context: true
+      context: true,
     }
 
-    const type = select(when((context) => context, firstType), when((context) => context, secondType))
+    const type = select(
+      when(context => context, firstType),
+      when(context => context, secondType)
+    )
     type.decode({}, meta)
 
     meta.bytes = 0

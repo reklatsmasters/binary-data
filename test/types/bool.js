@@ -43,11 +43,11 @@ describe('bool', () => {
         meta.bytes += bytes
         return 200
       },
-      encode() {}
+      encode() {},
     }
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const type = bool(lowtype)
@@ -66,11 +66,11 @@ describe('bool', () => {
         meta.bytes += bytes
         return 0
       },
-      encode() {}
+      encode() {},
     }
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const type = bool(lowtype)

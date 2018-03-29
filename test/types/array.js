@@ -71,7 +71,7 @@ describe('array', () => {
 
       const meta = {
         bytes: 0,
-        context: null
+        context: null,
       }
 
       let calls = 0
@@ -80,14 +80,18 @@ describe('array', () => {
         m.bytes += bytes
 
         switch (++calls) {
-          case 1: return first
-          case 2: return second
+          case 1:
+            return first
+          case 2:
+            return second
+          default:
+            break
         }
       }
 
       const type = {
         decode: fake,
-        encode() {}
+        encode() {},
       }
 
       const enctype = array(type, length)
@@ -112,7 +116,7 @@ describe('array', () => {
 
       const meta = {
         bytes: 0,
-        context: null
+        context: null,
       }
 
       let calls = 0
@@ -121,14 +125,18 @@ describe('array', () => {
         m.bytes += bytes
 
         switch (++calls) {
-          case 1: return first
-          case 2: return second
+          case 1:
+            return first
+          case 2:
+            return second
+          default:
+            break
         }
       }
 
       const type = {
         decode: fake,
-        encode() {}
+        encode() {},
       }
 
       const enctype = array(type, length, 'bytes')
@@ -166,7 +174,7 @@ describe('array', () => {
         decode() {},
         encodingLength() {
           return bytes
-        }
+        },
       }
 
       const type = array(itemType, length, 'bytes')
@@ -215,7 +223,7 @@ describe('array', () => {
 
       const meta = {
         bytes: 0,
-        context: null
+        context: null,
       }
 
       let calls = 0
@@ -224,21 +232,26 @@ describe('array', () => {
         m.bytes += bytes
 
         switch (++calls) {
-          case 1: return first
-          case 2: return second
+          case 1:
+            return first
+          case 2:
+            return second
+          default:
+            break
         }
       }
 
       const type = {
         decode: fake,
-        encode() {}
+        encode() {},
       }
 
       const lengthType = {
         decode(r, m) {
-          m.bytes += bytes; return length
+          m.bytes += bytes
+          return length
         },
-        encode() {}
+        encode() {},
       }
 
       const enctype = array(type, lengthType)
@@ -331,7 +344,7 @@ describe('array', () => {
         common.plug(lengthType, lengthBytes)
 
         const schema = {
-          a: common.makeType()
+          a: common.makeType(),
         }
 
         schema.a.encode.withArgs(items[0].a, wstream).returns(1)
@@ -359,7 +372,7 @@ describe('array', () => {
 
         const meta = {
           bytes: 0,
-          context: {}
+          context: {},
         }
 
         let calls = 0
@@ -368,26 +381,30 @@ describe('array', () => {
           m.bytes += bytes
 
           switch (++calls) {
-            case 1: return firstItem
-            case 2: return secondItem
+            case 1:
+              return firstItem
+            case 2:
+              return secondItem
+            default:
+              break
           }
         }
 
         const itemType = {
           decode: decodeItem,
-          encode() {}
+          encode() {},
         }
 
         const lengthType = {
           decode(r, m) {
-            m.bytes += lengthBytes;
+            m.bytes += lengthBytes
             return length
           },
-          encode() {}
+          encode() {},
         }
 
         const schema = {
-          a: itemType
+          a: itemType,
         }
 
         const type = array(schema, lengthType)
@@ -407,7 +424,7 @@ describe('array', () => {
   describe('length function', () => {
     test('decode', () => {
       const expectedContext = {
-        node: {}
+        node: {},
       }
 
       const expectLength = 2
@@ -418,7 +435,7 @@ describe('array', () => {
 
       const meta = {
         bytes: 0,
-        context: expectedContext
+        context: expectedContext,
       }
 
       let calls = 0
@@ -427,14 +444,18 @@ describe('array', () => {
         m.bytes += bytes
 
         switch (++calls) {
-          case 1: return first
-          case 2: return second
+          case 1:
+            return first
+          case 2:
+            return second
+          default:
+            break
         }
       }
 
       const type = {
         decode: fake,
-        encode() {}
+        encode() {},
       }
 
       const callback = sinon.stub()
@@ -458,7 +479,7 @@ describe('array', () => {
 
     test('decode if length in bytes', () => {
       const expectedContext = {
-        node: {}
+        node: {},
       }
 
       const bytes = 2
@@ -470,7 +491,7 @@ describe('array', () => {
 
       const meta = {
         bytes: 0,
-        context: expectedContext
+        context: expectedContext,
       }
 
       let calls = 0
@@ -479,14 +500,18 @@ describe('array', () => {
         m.bytes += bytes
 
         switch (++calls) {
-          case 1: return first
-          case 2: return second
+          case 1:
+            return first
+          case 2:
+            return second
+          default:
+            break
         }
       }
 
       const type = {
         decode: fake,
-        encode() {}
+        encode() {},
       }
 
       const callback = sinon.stub()
@@ -512,7 +537,7 @@ describe('array', () => {
       const items = [100, 200, 300]
 
       const context = {
-        node: {}
+        node: {},
       }
 
       const bytes = 4
@@ -538,7 +563,7 @@ describe('array', () => {
       const items = [100, 200, 300]
 
       const context = {
-        node: {}
+        node: {},
       }
 
       const bytes = 4

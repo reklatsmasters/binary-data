@@ -31,7 +31,7 @@ describe('reserved', () => {
 
     const meta = {
       context,
-      bytes: 0
+      bytes: 0,
     }
 
     callback.withArgs(context).returns(size)
@@ -42,13 +42,13 @@ describe('reserved', () => {
         meta.bytes += bytes
         return 200
       },
-      encode() {}
+      encode() {},
     }
 
     const type = reserved(lowtype, callback)
     const result = type.decode(rstream, meta)
 
-    expect(result).toBe(void 0)
+    expect(result).toBe(undefined)
     expect(callback.callCount).toBe(1)
     expect(meta.bytes).toBe(bytes * size)
   })

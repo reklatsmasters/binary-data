@@ -1,11 +1,8 @@
 jest.mock('streams/decode')
 
-const sinon = require('sinon')
 const reserved = require('types/reserved')
 const when = require('types/when')
 const { decode } = require('lib/decode')
-const DecodeStream = require('streams/decode')
-const common = require('testing/common')
 
 describe('decode', () => {
   test('should use schema', () => {
@@ -20,13 +17,13 @@ describe('decode', () => {
         decode(rstream, meta) {
           meta.bytes += bytes
           return res1
-        }
+        },
       },
       b: {
         decode(rstream, meta) {
           meta.bytes += bytes
           return res2
-        }
+        },
       },
     }
 
@@ -42,7 +39,6 @@ describe('decode', () => {
 
   test('should skip reserved field', () => {
     const rstream = {}
-    const type = common.makeType()
     const bytes = 10
     const res1 = 100
 
@@ -50,7 +46,7 @@ describe('decode', () => {
       decode(rstream, meta) {
         meta.bytes += bytes
         return res1
-      }
+      },
     }
 
     const type2 = {
@@ -58,7 +54,7 @@ describe('decode', () => {
         meta.bytes += bytes
         return 200
       },
-      encode() {}
+      encode() {},
     }
 
     const schema = {
@@ -80,7 +76,7 @@ describe('decode', () => {
 
     const context = {
       node: {},
-      currentNode: {}
+      currentNode: {},
     }
 
     let called = false
@@ -167,7 +163,7 @@ describe('decode', () => {
           meta.bytes += bytes
           return res1
         },
-      }
+      },
     }
 
     const expectedResult = {
@@ -191,7 +187,7 @@ describe('decode', () => {
       decode(rstream, meta) {
         meta.bytes += bytes
         return res1
-      }
+      },
     }
 
     const type2 = {
@@ -199,17 +195,17 @@ describe('decode', () => {
         meta.bytes += bytes
         return res2
       },
-      encode() {}
+      encode() {},
     }
 
     const schema = {
       a: type1,
-      b: when(() => true, type2)
+      b: when(() => true, type2),
     }
 
     const expectedResult = {
       a: res1,
-      b: res2
+      b: res2,
     }
 
     const result = decode(rstream, schema)
@@ -229,7 +225,7 @@ describe('decode', () => {
       decode(rstream, meta) {
         meta.bytes += bytes
         return res1
-      }
+      },
     }
 
     const type2 = {
@@ -237,16 +233,16 @@ describe('decode', () => {
         meta.bytes += bytes
         return res2
       },
-      encode() {}
+      encode() {},
     }
 
     const schema = {
       a: type1,
-      b: when(() => false, type2)
+      b: when(() => false, type2),
     }
 
     const expectedResult = {
-      a: res1
+      a: res1,
     }
 
     const result = decode(rstream, schema)

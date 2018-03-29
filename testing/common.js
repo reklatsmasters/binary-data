@@ -3,14 +3,14 @@ const sinon = require('sinon')
 module.exports = {
   makeType,
   plug,
-  reset
+  reset,
 }
 
 function makeType() {
   return {
     encode: sinon.stub(),
     decode: sinon.stub(),
-    encodingLength: sinon.stub()
+    encodingLength: sinon.stub(),
   }
 }
 

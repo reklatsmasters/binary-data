@@ -20,7 +20,7 @@ describe('doublebe', () => {
     readDoubleBE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.doublebe.decode({ readDoubleBE }, meta)
@@ -53,7 +53,7 @@ describe('doublele', () => {
     readDoubleLE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.doublele.decode({ readDoubleLE }, meta)
@@ -86,7 +86,7 @@ describe('floatbe', () => {
     readFloatBE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.floatbe.decode({ readFloatBE }, meta)
@@ -119,7 +119,7 @@ describe('floatle', () => {
     readFloatLE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.floatle.decode({ readFloatLE }, meta)
@@ -152,7 +152,7 @@ describe('int8', () => {
     readInt8.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.int8.decode({ readInt8 }, meta)
@@ -185,7 +185,7 @@ describe('uint8', () => {
     readUInt8.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.uint8.decode({ readUInt8 }, meta)
@@ -218,7 +218,7 @@ describe('int16be', () => {
     readInt16BE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.int16be.decode({ readInt16BE }, meta)
@@ -251,7 +251,7 @@ describe('uint16be', () => {
     readUInt16BE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.uint16be.decode({ readUInt16BE }, meta)
@@ -284,7 +284,7 @@ describe('int16le', () => {
     readInt16LE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.int16le.decode({ readInt16LE }, meta)
@@ -317,7 +317,7 @@ describe('uint16le', () => {
     readUInt16LE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.uint16le.decode({ readUInt16LE }, meta)
@@ -350,7 +350,7 @@ describe('int32be', () => {
     readInt32BE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.int32be.decode({ readInt32BE }, meta)
@@ -383,7 +383,7 @@ describe('uint32be', () => {
     readUInt32BE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.uint32be.decode({ readUInt32BE }, meta)
@@ -416,7 +416,7 @@ describe('int32le', () => {
     readInt32LE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.int32le.decode({ readInt32LE }, meta)
@@ -449,7 +449,7 @@ describe('uint32le', () => {
     readUInt32LE.returns(num)
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.uint32le.decode({ readUInt32LE }, meta)
@@ -485,7 +485,7 @@ describe('int24be', () => {
     readIntBE.throws('readIntBE')
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.int24be.decode({ readIntBE }, meta)
@@ -521,7 +521,7 @@ describe('uint24be', () => {
     readUIntBE.throws('readIntBE')
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.uint24be.decode({ readUIntBE }, meta)
@@ -557,7 +557,7 @@ describe('int24le', () => {
     readIntLE.throws('readIntBE')
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.int24le.decode({ readIntLE }, meta)
@@ -593,7 +593,7 @@ describe('uint24le', () => {
     readUIntLE.throws('readIntBE')
 
     const meta = {
-      bytes: 0
+      bytes: 0,
     }
 
     const result = types.uint24le.decode({ readUIntLE }, meta)

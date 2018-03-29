@@ -1,5 +1,4 @@
 const when = require('types/when')
-const common = require('testing/common')
 const symbols = require('internal/symbols')
 
 describe('when', () => {
@@ -9,8 +8,10 @@ describe('when', () => {
     const wstream = {}
 
     const childType = {
-      encode: jest.fn().mockImplementation(() => { childType.encode.bytes = childBytes }),
-      decode() {}
+      encode: jest.fn().mockImplementation(() => {
+        childType.encode.bytes = childBytes
+      }),
+      decode() {},
     }
 
     const context = {}
@@ -30,8 +31,10 @@ describe('when', () => {
     const wstream = {}
 
     const childType = {
-      encode: jest.fn().mockImplementation(() => { childType.encode.bytes = childBytes }),
-      decode() {}
+      encode: jest.fn().mockImplementation(() => {
+        childType.encode.bytes = childBytes
+      }),
+      decode() {},
     }
 
     const context = {}
@@ -54,7 +57,7 @@ describe('when', () => {
       encode() {},
       encodingLength() {
         return bytes
-      }
+      },
     }
 
     const type = when(() => true, childType)
@@ -71,7 +74,7 @@ describe('when', () => {
       encode() {},
       encodingLength() {
         return bytes
-      }
+      },
     }
 
     const type = when(() => false, childType)
@@ -88,12 +91,12 @@ describe('when', () => {
         meta.bytes += childBytes
         return childValue
       },
-      encode() {}
+      encode() {},
     }
 
     const meta = {
       bytes: 0,
-      context: {}
+      context: {},
     }
 
     const type = when(() => true, childType)
@@ -112,12 +115,12 @@ describe('when', () => {
         meta.bytes += childBytes
         return childValue
       },
-      encode() {}
+      encode() {},
     }
 
     const meta = {
       bytes: 0,
-      context: {}
+      context: {},
     }
 
     const type = when(() => false, childType)

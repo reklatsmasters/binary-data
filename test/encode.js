@@ -66,7 +66,7 @@ describe('encode', () => {
     schema.a.encode.throws('schema.a.encode')
     schema.a.encode.bytes = 10
 
-    schema.b.encode.withArgs(void 0, wstream).returns(1)
+    schema.b.encode.withArgs(undefined, wstream).returns(1)
     schema.b.encode.throws('schema.b.encode')
     schema.b.encode.bytes = 33
 

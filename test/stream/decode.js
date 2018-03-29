@@ -21,13 +21,15 @@ describe('decode', () => {
     const requestedBytes = buf.length + 1
 
     expect(() => stream.readBuffer(requestedBytes)).toThrow(
-      `Not enough data: requested ${requestedBytes} bytes but only ${buf.length} available.`
+      `Not enough data: requested ${requestedBytes} bytes but only ${
+        buf.length
+      } available.`
     )
   })
 
   test('default numbers', () => {
     const suites = [
-      /* type, size, test value */
+      /* Type, size, test value */
       ['DoubleBE', 8, Number.MAX_SAFE_INTEGER / 2],
       ['DoubleLE', 8, Number.MAX_SAFE_INTEGER / 2],
 
@@ -67,7 +69,7 @@ describe('decode', () => {
 
   test('custom numbers', () => {
     const suites = [
-      /* type, size, test value */
+      /* Type, size, test value */
       ['IntBE', 3, 0x7fffff - 1],
       ['UIntBE', 3, 0xffffff - 1],
 
@@ -91,7 +93,7 @@ describe('decode', () => {
   })
 
   test('should support pipes', done => {
-    expect.assertions(4)
+    expect.assertions(5)
 
     const stream = new DecodeStream()
     stream.append(Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5, 0x6]))
@@ -101,6 +103,7 @@ describe('decode', () => {
 
     stream.pipe(
       bl((err, data) => {
+        expect(err).not.toBeTruthy()
         expect(data.length).toBe(2)
         expect(data.readUInt16BE(0)).toBe(0x0506)
       })
