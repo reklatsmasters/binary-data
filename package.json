@@ -60,8 +60,10 @@
     "testRegex": "test/(.*)\\.js$",
     "coverageDirectory": "<rootDir>/coverage",
     "coveragePathIgnorePatterns": [
-      "/test/",
-      "/testing/"
+      "<rootDir>/node_modules/"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.js"
     ]
   }
 }
