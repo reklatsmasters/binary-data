@@ -1,608 +1,844 @@
-const sinon = require('sinon')
+/* eslint-disable max-lines */
 const types = require('types/numbers')
 
 describe('doublebe', () => {
-  it('write', () => {
-    const num = 8800555.3535
-    const writeDoubleBE = sinon.stub()
+  const numberType = types.doublebe
 
-    writeDoubleBE.withArgs(num).returns(1)
-    writeDoubleBE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeDoubleBE = jest.fn()
 
-    types.doublebe.encode(num, { writeDoubleBE })
-    expect(writeDoubleBE.callCount).toEqual(1)
-    expect(types.doublebe.encode.bytes).toEqual(8)
+    numberType.encode(value, { writeDoubleBE })
+
+    expect(writeDoubleBE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(8)
   })
 
-  it('read', () => {
-    const num = 8800555.3535
-    const readDoubleBE = sinon.stub()
-    readDoubleBE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readDoubleBE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.doublebe.decode({ readDoubleBE }, meta)
-    expect(readDoubleBE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readDoubleBE }, meta)).toEqual(value)
+    expect(readDoubleBE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(8)
   })
 
-  it('size', () => {
-    expect(types.doublebe.encodingLength()).toEqual(8)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(8)
   })
 })
 
 describe('doublele', () => {
-  it('write', () => {
-    const num = 8800555.3535
-    const writeDoubleLE = sinon.stub()
+  const numberType = types.doublele
 
-    writeDoubleLE.withArgs(num).returns(1)
-    writeDoubleLE.throws('writeDoubleLE')
+  test('write', () => {
+    const value = 1
+    const writeDoubleLE = jest.fn()
 
-    types.doublele.encode(num, { writeDoubleLE })
-    expect(writeDoubleLE.callCount).toEqual(1)
-    expect(types.doublele.encode.bytes).toEqual(8)
+    numberType.encode(value, { writeDoubleLE })
+
+    expect(writeDoubleLE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(8)
   })
 
-  it('read', () => {
-    const num = 8800555.3535
-    const readDoubleLE = sinon.stub()
-    readDoubleLE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readDoubleLE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.doublele.decode({ readDoubleLE }, meta)
-    expect(readDoubleLE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readDoubleLE }, meta)).toEqual(value)
+    expect(readDoubleLE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(8)
   })
 
-  it('size', () => {
-    expect(types.doublele.encodingLength()).toEqual(8)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(8)
   })
 })
 
 describe('floatbe', () => {
-  it('write', () => {
-    const num = 880.35
-    const writeFloatBE = sinon.stub()
+  const numberType = types.floatbe
 
-    writeFloatBE.withArgs(num).returns(1)
-    writeFloatBE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeFloatBE = jest.fn()
 
-    types.floatbe.encode(num, { writeFloatBE })
-    expect(writeFloatBE.callCount).toEqual(1)
-    expect(types.floatbe.encode.bytes).toEqual(4)
+    numberType.encode(value, { writeFloatBE })
+
+    expect(writeFloatBE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(4)
   })
 
-  it('read', () => {
-    const num = 880.35
-    const readFloatBE = sinon.stub()
-    readFloatBE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readFloatBE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.floatbe.decode({ readFloatBE }, meta)
-    expect(readFloatBE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readFloatBE }, meta)).toEqual(value)
+    expect(readFloatBE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(4)
   })
 
-  it('size', () => {
-    expect(types.floatbe.encodingLength()).toEqual(4)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(4)
   })
 })
 
 describe('floatle', () => {
-  it('write', () => {
-    const num = 880.35
-    const writeFloatLE = sinon.stub()
+  const numberType = types.floatle
 
-    writeFloatLE.withArgs(num).returns(1)
-    writeFloatLE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeFloatLE = jest.fn()
 
-    types.floatle.encode(num, { writeFloatLE })
-    expect(writeFloatLE.callCount).toEqual(1)
-    expect(types.floatle.encode.bytes).toEqual(4)
+    numberType.encode(value, { writeFloatLE })
+
+    expect(writeFloatLE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(4)
   })
 
-  it('read', () => {
-    const num = 880.35
-    const readFloatLE = sinon.stub()
-    readFloatLE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readFloatLE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.floatle.decode({ readFloatLE }, meta)
-    expect(readFloatLE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readFloatLE }, meta)).toEqual(value)
+    expect(readFloatLE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(4)
   })
 
-  it('size', () => {
-    expect(types.floatle.encodingLength()).toEqual(4)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(4)
   })
 })
 
 describe('int8', () => {
-  it('write', () => {
-    const num = 1
-    const writeInt8 = sinon.stub()
+  const numberType = types.int8
 
-    writeInt8.withArgs(num).returns(1)
-    writeInt8.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeInt8 = jest.fn()
 
-    types.int8.encode(num, { writeInt8 })
-    expect(writeInt8.callCount).toEqual(1)
-    expect(types.int8.encode.bytes).toEqual(1)
+    numberType.encode(value, { writeInt8 })
+
+    expect(writeInt8).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(1)
   })
 
-  it('read', () => {
-    const num = 1
-    const readInt8 = sinon.stub()
-    readInt8.returns(num)
+  test('read', () => {
+    const value = 1
+    const readInt8 = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.int8.decode({ readInt8 }, meta)
-    expect(readInt8.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readInt8 }, meta)).toEqual(value)
+    expect(readInt8).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(1)
   })
 
-  it('size', () => {
-    expect(types.int8.encodingLength()).toEqual(1)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(1)
   })
 })
 
 describe('uint8', () => {
-  it('write', () => {
-    const num = 1
-    const writeUInt8 = sinon.stub()
+  const numberType = types.uint8
 
-    writeUInt8.withArgs(num).returns(1)
-    writeUInt8.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeUInt8 = jest.fn()
 
-    types.uint8.encode(num, { writeUInt8 })
-    expect(writeUInt8.callCount).toEqual(1)
-    expect(types.uint8.encode.bytes).toEqual(1)
+    numberType.encode(value, { writeUInt8 })
+
+    expect(writeUInt8).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(1)
   })
 
-  it('read', () => {
-    const num = 1
-    const readUInt8 = sinon.stub()
-    readUInt8.returns(num)
+  test('read', () => {
+    const value = 1
+    const readUInt8 = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.uint8.decode({ readUInt8 }, meta)
-    expect(readUInt8.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readUInt8 }, meta)).toEqual(value)
+    expect(readUInt8).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(1)
   })
 
-  it('size', () => {
-    expect(types.uint8.encodingLength()).toEqual(1)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(1)
   })
 })
 
 describe('int16be', () => {
-  it('write', () => {
-    const num = 1
-    const writeInt16BE = sinon.stub()
+  const numberType = types.int16be
 
-    writeInt16BE.withArgs(num).returns(1)
-    writeInt16BE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeInt16BE = jest.fn()
 
-    types.int16be.encode(num, { writeInt16BE })
-    expect(writeInt16BE.callCount).toEqual(1)
-    expect(types.int16be.encode.bytes).toEqual(2)
+    numberType.encode(value, { writeInt16BE })
+
+    expect(writeInt16BE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(2)
   })
 
-  it('read', () => {
-    const num = 1
-    const readInt16BE = sinon.stub()
-    readInt16BE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readInt16BE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.int16be.decode({ readInt16BE }, meta)
-    expect(readInt16BE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readInt16BE }, meta)).toEqual(value)
+    expect(readInt16BE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(2)
   })
 
-  it('size', () => {
-    expect(types.int16be.encodingLength()).toEqual(2)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(2)
   })
 })
 
 describe('uint16be', () => {
-  it('write', () => {
-    const num = 1
-    const writeUInt16BE = sinon.stub()
+  const numberType = types.uint16be
 
-    writeUInt16BE.withArgs(num).returns(1)
-    writeUInt16BE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeUInt16BE = jest.fn()
 
-    types.uint16be.encode(num, { writeUInt16BE })
-    expect(writeUInt16BE.callCount).toEqual(1)
-    expect(types.uint16be.encode.bytes).toEqual(2)
+    numberType.encode(value, { writeUInt16BE })
+
+    expect(writeUInt16BE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(2)
   })
 
-  it('read', () => {
-    const num = 1
-    const readUInt16BE = sinon.stub()
-    readUInt16BE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readUInt16BE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.uint16be.decode({ readUInt16BE }, meta)
-    expect(readUInt16BE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readUInt16BE }, meta)).toEqual(value)
+    expect(readUInt16BE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(2)
   })
 
-  it('size', () => {
-    expect(types.uint16be.encodingLength()).toEqual(2)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(2)
   })
 })
 
 describe('int16le', () => {
-  it('write', () => {
-    const num = 1
-    const writeInt16LE = sinon.stub()
+  const numberType = types.int16le
 
-    writeInt16LE.withArgs(num).returns(1)
-    writeInt16LE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeInt16LE = jest.fn()
 
-    types.int16le.encode(num, { writeInt16LE })
-    expect(writeInt16LE.callCount).toEqual(1)
-    expect(types.int16le.encode.bytes).toEqual(2)
+    numberType.encode(value, { writeInt16LE })
+
+    expect(writeInt16LE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(2)
   })
 
-  it('read', () => {
-    const num = 1
-    const readInt16LE = sinon.stub()
-    readInt16LE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readInt16LE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.int16le.decode({ readInt16LE }, meta)
-    expect(readInt16LE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readInt16LE }, meta)).toEqual(value)
+    expect(readInt16LE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(2)
   })
 
-  it('size', () => {
-    expect(types.int16le.encodingLength()).toEqual(2)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(2)
   })
 })
 
 describe('uint16le', () => {
-  it('write', () => {
-    const num = 1
-    const writeUInt16LE = sinon.stub()
+  const numberType = types.uint16le
 
-    writeUInt16LE.withArgs(num).returns(1)
-    writeUInt16LE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeUInt16LE = jest.fn()
 
-    types.uint16le.encode(num, { writeUInt16LE })
-    expect(writeUInt16LE.callCount).toEqual(1)
-    expect(types.uint16le.encode.bytes).toEqual(2)
+    numberType.encode(value, { writeUInt16LE })
+
+    expect(writeUInt16LE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(2)
   })
 
-  it('read', () => {
-    const num = 1
-    const readUInt16LE = sinon.stub()
-    readUInt16LE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readUInt16LE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.uint16le.decode({ readUInt16LE }, meta)
-    expect(readUInt16LE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readUInt16LE }, meta)).toEqual(value)
+    expect(readUInt16LE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(2)
   })
 
-  it('size', () => {
-    expect(types.uint16le.encodingLength()).toEqual(2)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(2)
   })
 })
 
 describe('int32be', () => {
-  it('write', () => {
-    const num = 1
-    const writeInt32BE = sinon.stub()
+  const numberType = types.int32be
 
-    writeInt32BE.withArgs(num).returns(1)
-    writeInt32BE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeInt32BE = jest.fn()
 
-    types.int32be.encode(num, { writeInt32BE })
-    expect(writeInt32BE.callCount).toEqual(1)
-    expect(types.int32be.encode.bytes).toEqual(4)
+    numberType.encode(value, { writeInt32BE })
+
+    expect(writeInt32BE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(4)
   })
 
-  it('read', () => {
-    const num = 1
-    const readInt32BE = sinon.stub()
-    readInt32BE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readInt32BE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.int32be.decode({ readInt32BE }, meta)
-    expect(readInt32BE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readInt32BE }, meta)).toEqual(value)
+    expect(readInt32BE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(4)
   })
 
-  it('size', () => {
-    expect(types.int32be.encodingLength()).toEqual(4)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(4)
   })
 })
 
 describe('uint32be', () => {
-  it('write', () => {
-    const num = 1
-    const writeUInt32BE = sinon.stub()
+  const numberType = types.uint32be
 
-    writeUInt32BE.withArgs(num).returns(1)
-    writeUInt32BE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeUInt32BE = jest.fn()
 
-    types.uint32be.encode(num, { writeUInt32BE })
-    expect(writeUInt32BE.callCount).toEqual(1)
-    expect(types.uint32be.encode.bytes).toEqual(4)
+    numberType.encode(value, { writeUInt32BE })
+
+    expect(writeUInt32BE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(4)
   })
 
-  it('read', () => {
-    const num = 1
-    const readUInt32BE = sinon.stub()
-    readUInt32BE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readUInt32BE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.uint32be.decode({ readUInt32BE }, meta)
-    expect(readUInt32BE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readUInt32BE }, meta)).toEqual(value)
+    expect(readUInt32BE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(4)
   })
 
-  it('size', () => {
-    expect(types.uint32be.encodingLength()).toEqual(4)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(4)
   })
 })
 
 describe('int32le', () => {
-  it('write', () => {
-    const num = 1
-    const writeInt32LE = sinon.stub()
+  const numberType = types.int32le
 
-    writeInt32LE.withArgs(num).returns(1)
-    writeInt32LE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeInt32LE = jest.fn()
 
-    types.int32le.encode(num, { writeInt32LE })
-    expect(writeInt32LE.callCount).toEqual(1)
-    expect(types.int32le.encode.bytes).toEqual(4)
+    numberType.encode(value, { writeInt32LE })
+
+    expect(writeInt32LE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(4)
   })
 
-  it('read', () => {
-    const num = 1
-    const readInt32LE = sinon.stub()
-    readInt32LE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readInt32LE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.int32le.decode({ readInt32LE }, meta)
-    expect(readInt32LE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readInt32LE }, meta)).toEqual(value)
+    expect(readInt32LE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(4)
   })
 
-  it('size', () => {
-    expect(types.int32le.encodingLength()).toEqual(4)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(4)
   })
 })
 
 describe('uint32le', () => {
-  it('write', () => {
-    const num = 1
-    const writeUInt32LE = sinon.stub()
+  const numberType = types.uint32le
 
-    writeUInt32LE.withArgs(num).returns(1)
-    writeUInt32LE.throws('writeDoubleBE')
+  test('write', () => {
+    const value = 1
+    const writeUInt32LE = jest.fn()
 
-    types.uint32le.encode(num, { writeUInt32LE })
-    expect(writeUInt32LE.callCount).toEqual(1)
-    expect(types.uint32le.encode.bytes).toEqual(4)
+    numberType.encode(value, { writeUInt32LE })
+
+    expect(writeUInt32LE).toHaveBeenCalledTimes(1)
+    expect(numberType.encode.bytes).toEqual(4)
   })
 
-  it('read', () => {
-    const num = 1
-    const readUInt32LE = sinon.stub()
-    readUInt32LE.returns(num)
+  test('read', () => {
+    const value = 1
+    const readUInt32LE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.uint32le.decode({ readUInt32LE }, meta)
-    expect(readUInt32LE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readUInt32LE }, meta)).toEqual(value)
+    expect(readUInt32LE).toHaveBeenCalledTimes(1)
     expect(meta.bytes).toEqual(4)
   })
 
-  it('size', () => {
+  test('size', () => {
     expect(types.uint32le.encodingLength()).toEqual(4)
   })
 })
 
 describe('int24be', () => {
+  const numberType = types.int24be
   const size = 3
 
-  it('write', () => {
-    const num = 1
-    const writeIntBE = sinon.stub()
+  test('write', () => {
+    const value = 1
+    const writeIntBE = jest.fn()
 
-    writeIntBE.withArgs(num, size).returns(1)
-    writeIntBE.throws('writeIntBE')
+    numberType.encode(value, { writeIntBE })
 
-    types.int24be.encode(num, { writeIntBE })
-    expect(writeIntBE.callCount).toEqual(1)
-    expect(types.int24be.encode.bytes).toEqual(size)
+    expect(writeIntBE).toHaveBeenCalledTimes(1)
+    expect(writeIntBE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
   })
 
-  it('read', () => {
-    const num = 1
-    const readIntBE = sinon.stub()
-    readIntBE.withArgs(size).returns(num)
-    readIntBE.throws('readIntBE')
+  test('read', () => {
+    const value = 1
+    const readIntBE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.int24be.decode({ readIntBE }, meta)
-    expect(readIntBE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readIntBE }, meta)).toEqual(value)
+    expect(readIntBE).toHaveBeenCalledTimes(1)
+    expect(readIntBE).toBeCalledWith(size)
     expect(meta.bytes).toEqual(size)
   })
 
-  it('size', () => {
-    expect(types.int24be.encodingLength()).toEqual(size)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
   })
 })
 
 describe('uint24be', () => {
+  const numberType = types.uint24be
   const size = 3
 
-  it('write', () => {
-    const num = 1
-    const writeUIntBE = sinon.stub()
+  test('write', () => {
+    const value = 1
+    const writeUIntBE = jest.fn()
 
-    writeUIntBE.withArgs(num, size).returns(1)
-    writeUIntBE.throws('writeIntBE')
+    numberType.encode(value, { writeUIntBE })
 
-    types.uint24be.encode(num, { writeUIntBE })
-    expect(writeUIntBE.callCount).toEqual(1)
-    expect(types.uint24be.encode.bytes).toEqual(size)
+    expect(writeUIntBE).toHaveBeenCalledTimes(1)
+    expect(writeUIntBE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
   })
 
-  it('read', () => {
-    const num = 1
-    const readUIntBE = sinon.stub()
-    readUIntBE.withArgs(size).returns(num)
-    readUIntBE.throws('readIntBE')
+  test('read', () => {
+    const value = 1
+    const readUIntBE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.uint24be.decode({ readUIntBE }, meta)
-    expect(readUIntBE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readUIntBE }, meta)).toEqual(value)
+    expect(readUIntBE).toHaveBeenCalledTimes(1)
+    expect(readUIntBE).toBeCalledWith(size)
     expect(meta.bytes).toEqual(size)
   })
 
-  it('size', () => {
-    expect(types.uint24be.encodingLength()).toEqual(size)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
   })
 })
 
 describe('int24le', () => {
+  const numberType = types.int24le
   const size = 3
 
-  it('write', () => {
-    const num = 1
-    const writeIntLE = sinon.stub()
+  test('write', () => {
+    const value = 1
+    const writeIntLE = jest.fn()
 
-    writeIntLE.withArgs(num, size).returns(1)
-    writeIntLE.throws('writeIntBE')
+    numberType.encode(value, { writeIntLE })
 
-    types.int24le.encode(num, { writeIntLE })
-    expect(writeIntLE.callCount).toEqual(1)
-    expect(types.int24le.encode.bytes).toEqual(size)
+    expect(writeIntLE).toHaveBeenCalledTimes(1)
+    expect(writeIntLE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
   })
 
-  it('read', () => {
-    const num = 1
-    const readIntLE = sinon.stub()
-    readIntLE.withArgs(size).returns(num)
-    readIntLE.throws('readIntBE')
+  test('read', () => {
+    const value = 1
+    const readIntLE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.int24le.decode({ readIntLE }, meta)
-    expect(readIntLE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readIntLE }, meta)).toEqual(value)
+    expect(readIntLE).toHaveBeenCalledTimes(1)
+    expect(readIntLE).toBeCalledWith(size)
     expect(meta.bytes).toEqual(size)
   })
 
-  it('size', () => {
-    expect(types.int24le.encodingLength()).toEqual(size)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
   })
 })
 
 describe('uint24le', () => {
+  const numberType = types.uint24le
   const size = 3
 
-  it('write', () => {
-    const num = 1
-    const writeUIntLE = sinon.stub()
+  test('write', () => {
+    const value = 1
+    const writeUIntLE = jest.fn()
 
-    writeUIntLE.withArgs(num, size).returns(1)
-    writeUIntLE.throws('writeIntBE')
+    numberType.encode(value, { writeUIntLE })
 
-    types.uint24le.encode(num, { writeUIntLE })
-    expect(writeUIntLE.callCount).toEqual(1)
-    expect(types.uint24le.encode.bytes).toEqual(size)
+    expect(writeUIntLE).toHaveBeenCalledTimes(1)
+    expect(writeUIntLE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
   })
 
-  it('read', () => {
-    const num = 1
-    const readUIntLE = sinon.stub()
-    readUIntLE.withArgs(size).returns(num)
-    readUIntLE.throws('readIntBE')
+  test('read', () => {
+    const value = 1
+    const readUIntLE = jest.fn().mockImplementation(() => value)
 
     const meta = {
       bytes: 0,
     }
 
-    const result = types.uint24le.decode({ readUIntLE }, meta)
-    expect(readUIntLE.callCount).toEqual(1)
-    expect(result).toEqual(num)
+    expect(numberType.decode({ readUIntLE }, meta)).toEqual(value)
+    expect(readUIntLE).toHaveBeenCalledTimes(1)
+    expect(readUIntLE).toBeCalledWith(size)
     expect(meta.bytes).toEqual(size)
   })
 
-  it('size', () => {
-    expect(types.uint24le.encodingLength()).toEqual(size)
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('int40be', () => {
+  const numberType = types.int40be
+  const size = 5
+
+  test('write', () => {
+    const value = 1
+    const writeIntBE = jest.fn()
+
+    numberType.encode(value, { writeIntBE })
+
+    expect(writeIntBE).toHaveBeenCalledTimes(1)
+    expect(writeIntBE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readIntBE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readIntBE }, meta)).toEqual(value)
+    expect(readIntBE).toHaveBeenCalledTimes(1)
+    expect(readIntBE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('uint40be', () => {
+  const numberType = types.uint40be
+  const size = 5
+
+  test('write', () => {
+    const value = 1
+    const writeUIntBE = jest.fn()
+
+    numberType.encode(value, { writeUIntBE })
+
+    expect(writeUIntBE).toHaveBeenCalledTimes(1)
+    expect(writeUIntBE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readUIntBE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readUIntBE }, meta)).toEqual(value)
+    expect(readUIntBE).toHaveBeenCalledTimes(1)
+    expect(readUIntBE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('int40le', () => {
+  const numberType = types.int40le
+  const size = 5
+
+  test('write', () => {
+    const value = 1
+    const writeIntLE = jest.fn()
+
+    numberType.encode(value, { writeIntLE })
+
+    expect(writeIntLE).toHaveBeenCalledTimes(1)
+    expect(writeIntLE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readIntLE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readIntLE }, meta)).toEqual(value)
+    expect(readIntLE).toHaveBeenCalledTimes(1)
+    expect(readIntLE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('uint40le', () => {
+  const numberType = types.uint40le
+  const size = 5
+
+  test('write', () => {
+    const value = 1
+    const writeUIntLE = jest.fn()
+
+    numberType.encode(value, { writeUIntLE })
+
+    expect(writeUIntLE).toHaveBeenCalledTimes(1)
+    expect(writeUIntLE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readUIntLE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readUIntLE }, meta)).toEqual(value)
+    expect(readUIntLE).toHaveBeenCalledTimes(1)
+    expect(readUIntLE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('int48be', () => {
+  const numberType = types.int48be
+  const size = 6
+
+  test('write', () => {
+    const value = 1
+    const writeIntBE = jest.fn()
+
+    numberType.encode(value, { writeIntBE })
+
+    expect(writeIntBE).toHaveBeenCalledTimes(1)
+    expect(writeIntBE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readIntBE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readIntBE }, meta)).toEqual(value)
+    expect(readIntBE).toHaveBeenCalledTimes(1)
+    expect(readIntBE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('uint48be', () => {
+  const numberType = types.uint48be
+  const size = 6
+
+  test('write', () => {
+    const value = 1
+    const writeUIntBE = jest.fn()
+
+    numberType.encode(value, { writeUIntBE })
+
+    expect(writeUIntBE).toHaveBeenCalledTimes(1)
+    expect(writeUIntBE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readUIntBE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readUIntBE }, meta)).toEqual(value)
+    expect(readUIntBE).toHaveBeenCalledTimes(1)
+    expect(readUIntBE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('int48le', () => {
+  const numberType = types.int48le
+  const size = 6
+
+  test('write', () => {
+    const value = 1
+    const writeIntLE = jest.fn()
+
+    numberType.encode(value, { writeIntLE })
+
+    expect(writeIntLE).toHaveBeenCalledTimes(1)
+    expect(writeIntLE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readIntLE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readIntLE }, meta)).toEqual(value)
+    expect(readIntLE).toHaveBeenCalledTimes(1)
+    expect(readIntLE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
+  })
+})
+
+describe('uint48le', () => {
+  const numberType = types.uint48le
+  const size = 6
+
+  test('write', () => {
+    const value = 1
+    const writeUIntLE = jest.fn()
+
+    numberType.encode(value, { writeUIntLE })
+
+    expect(writeUIntLE).toHaveBeenCalledTimes(1)
+    expect(writeUIntLE).toBeCalledWith(value, size)
+    expect(numberType.encode.bytes).toEqual(size)
+  })
+
+  test('read', () => {
+    const value = 1
+    const readUIntLE = jest.fn().mockImplementation(() => value)
+
+    const meta = {
+      bytes: 0,
+    }
+
+    expect(numberType.decode({ readUIntLE }, meta)).toEqual(value)
+    expect(readUIntLE).toHaveBeenCalledTimes(1)
+    expect(readUIntLE).toBeCalledWith(size)
+    expect(meta.bytes).toEqual(size)
+  })
+
+  test('size', () => {
+    expect(numberType.encodingLength()).toEqual(size)
   })
 })
