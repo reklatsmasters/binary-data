@@ -1,47 +1,52 @@
 const bool = require('types/bool')
-const common = require('testing/common')
 
 describe('bool', () => {
-  const lowtype = common.makeType()
-
-  beforeEach(() => {
-    common.reset(lowtype)
-  })
-
-  test('encode true', () => {
+  test('encode positive', () => {
     const wstream = {}
+    const itemBytes = 5
 
-    lowtype.encode.withArgs(1, wstream).returns(1)
-    common.plug(lowtype)
+    const itemType = {
+      decode() {},
+      encode: jest.fn().mockImplementation(() => {
+        itemType.encode.bytes = itemBytes
+      }),
+    }
 
-    const type = bool(lowtype)
+    const type = bool(itemType)
     type.encode(true, wstream)
 
-    expect(lowtype.encode.callCount).toBe(1)
-    expect(type.encode.bytes).toBe(lowtype.encode.bytes)
+    expect(itemType.encode).toHaveBeenCalledTimes(1)
+    expect(itemType.encode).toBeCalledWith(1, wstream)
+    expect(type.encode.bytes).toBe(itemBytes)
   })
 
-  test('encode false', () => {
+  test('encode negative', () => {
     const wstream = {}
+    const itemBytes = 5
 
-    lowtype.encode.withArgs(0, wstream).returns(1)
-    common.plug(lowtype)
+    const itemType = {
+      decode() {},
+      encode: jest.fn().mockImplementation(() => {
+        itemType.encode.bytes = itemBytes
+      }),
+    }
 
-    const type = bool(lowtype)
+    const type = bool(itemType)
     type.encode(false, wstream)
 
-    expect(lowtype.encode.callCount).toBe(1)
-    expect(type.encode.bytes).toBe(lowtype.encode.bytes)
+    expect(itemType.encode).toHaveBeenCalledTimes(1)
+    expect(itemType.encode).toBeCalledWith(0, wstream)
+    expect(type.encode.bytes).toBe(itemBytes)
   })
 
-  test('decode true', () => {
+  test('decode positive', () => {
     const rstream = {}
-    const bytes = 10
+    const itemBytes = 10
 
-    const lowtype = {
+    const itemType = {
       decode(rstream, meta) {
-        meta.bytes += bytes
-        return 200
+        meta.bytes += itemBytes
+        return 1
       },
       encode() {},
     }
@@ -50,20 +55,20 @@ describe('bool', () => {
       bytes: 0,
     }
 
-    const type = bool(lowtype)
+    const type = bool(itemType)
     const result = type.decode(rstream, meta)
 
     expect(result).toBe(true)
-    expect(meta.bytes).toBe(bytes)
+    expect(meta.bytes).toBe(itemBytes)
   })
 
-  test('decode false', () => {
+  test('decode negative', () => {
     const rstream = {}
-    const bytes = 10
+    const itemBytes = 10
 
-    const lowtype = {
+    const itemType = {
       decode(rstream, meta) {
-        meta.bytes += bytes
+        meta.bytes += itemBytes
         return 0
       },
       encode() {},
@@ -73,22 +78,26 @@ describe('bool', () => {
       bytes: 0,
     }
 
-    const type = bool(lowtype)
+    const type = bool(itemType)
     const result = type.decode(rstream, meta)
 
     expect(result).toBe(false)
-    expect(meta.bytes).toBe(bytes)
+    expect(meta.bytes).toBe(itemBytes)
   })
 
   test('encodingLength', () => {
     const expectedLength = 4
     const value = true
 
-    lowtype.encodingLength.withArgs(value).returns(expectedLength)
-    common.plug(lowtype)
+    const itemType = {
+      encode() {},
+      decode() {},
+      encodingLength() {
+        return expectedLength
+      },
+    }
 
-    const type = bool(lowtype)
+    const type = bool(itemType)
     expect(type.encodingLength(value)).toBe(expectedLength)
-    expect(lowtype.encodingLength.callCount).toBe(1)
   })
 })
