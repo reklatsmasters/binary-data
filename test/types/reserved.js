@@ -1,106 +1,134 @@
 const reserved = require('types/reserved')
-const sinon = require('sinon')
-const common = require('testing/common')
 
 describe('reserved', () => {
-  const lowtype = common.makeType()
+  describe('argument `size` is number', () => {
+    test('encode', () => {
+      const size = 2
+      const wstream = {}
 
-  beforeEach(() => {
-    common.reset(lowtype)
+      const itemType = {
+        encode: jest.fn().mockImplementation(() => {
+          itemType.encode.bytes = size
+        }),
+        decode() {},
+      }
+
+      const type = reserved(itemType, size)
+
+      type.encode('qqq', wstream)
+      expect(itemType.encode).toHaveBeenCalledTimes(size)
+      expect(type.encode.bytes).toBe(itemType.encode.bytes * size)
+    })
+
+    test('decode', () => {
+      const size = 2
+      const rstream = {}
+      const bytes = 3
+
+      const itemType = {
+        decode: jest.fn().mockImplementation((r, meta) => {
+          meta.bytes += bytes
+        }),
+        encode() {},
+      }
+
+      const meta = {
+        bytes: 0,
+        context: {},
+      }
+
+      const type = reserved(itemType, size)
+
+      expect(type.decode(rstream, meta)).toBeUndefined()
+      expect(itemType.decode).toHaveBeenCalledTimes(size)
+      expect(meta.bytes).toEqual(size * bytes)
+    })
+
+    test('encodingLength', () => {
+      const size = 4
+      const value = 1
+      const length = 2
+
+      const itemType = {
+        decode() {},
+        encode() {},
+        encodingLength() {
+          return length
+        },
+      }
+
+      const type = reserved(itemType, size)
+
+      expect(type.encodingLength(value)).toBe(size * length)
+    })
   })
 
-  test('encode', () => {
-    const size = 2
-    const type = reserved(lowtype, size)
-    const wstream = {}
+  describe('argument `size` is function', () => {
+    test('decode', () => {
+      const bytes = 10
+      const size = 2
+      const rstream = {}
 
-    lowtype.encode.withArgs(0, wstream).returns(1)
-    common.plug(lowtype)
+      const meta = {
+        context: {},
+        bytes: 0,
+      }
 
-    type.encode('qqq', wstream)
-    expect(lowtype.encode.callCount).toBe(size)
-    expect(type.encode.bytes).toBe(lowtype.encode.bytes * size)
-  })
-  test('should decode when `size` is function', () => {
-    const callback = sinon.stub()
-    const bytes = 10
+      const callback = jest.fn().mockImplementation(() => size)
 
-    const size = 2
-    const rstream = {}
-    const context = { node: {} }
+      const itemType = {
+        decode: jest.fn().mockImplementation((r, meta) => {
+          meta.bytes += bytes
+        }),
+        encode() {},
+      }
 
-    const meta = {
-      context,
-      bytes: 0,
-    }
+      const type = reserved(itemType, callback)
 
-    callback.withArgs(context).returns(size)
-    callback.throws('callback')
+      expect(type.decode(rstream, meta)).toBeUndefined()
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(meta.bytes).toBe(bytes * size)
+    })
 
-    const lowtype = {
-      decode(rstream, meta) {
-        meta.bytes += bytes
-        return 200
-      },
-      encode() {},
-    }
+    test('encode', () => {
+      const size = 2
+      const bytes = 3
+      const wstream = {}
+      const callback = jest.fn().mockImplementation(() => size)
 
-    const type = reserved(lowtype, callback)
-    const result = type.decode(rstream, meta)
+      const itemType = {
+        encode: jest.fn().mockImplementation(() => {
+          itemType.encode.bytes = bytes
+        }),
+        decode() {},
+      }
 
-    expect(result).toBe(undefined)
-    expect(callback.callCount).toBe(1)
-    expect(meta.bytes).toBe(bytes * size)
-  })
+      const type = reserved(itemType, callback)
+      type.encode('qqq', wstream)
 
-  test('should encode when `size` is function', () => {
-    const size = 2
-    const wstream = {}
-    const context = { node: {} }
-    const callback = sinon.stub()
+      expect(itemType.encode).toHaveBeenCalledTimes(size)
+      expect(callback).toHaveBeenCalledTimes(1)
+      expect(type.encode.bytes).toBe(itemType.encode.bytes * size)
+    })
 
-    callback.withArgs(context).returns(size)
-    callback.throws('callback')
+    test('encodingLength', () => {
+      const size = 2
+      const value = 1
+      const callback = jest.fn().mockImplementation(() => size)
+      const length = 2
 
-    lowtype.encode.withArgs(0, wstream).returns(1)
-    common.plug(lowtype)
+      const itemType = {
+        decode() {},
+        encode() {},
+        encodingLength() {
+          return length
+        },
+      }
 
-    const type = reserved(lowtype, callback)
-    type.encode(null, wstream, context)
+      const type = reserved(itemType, callback)
 
-    expect(lowtype.encode.callCount).toBe(size)
-    expect(callback.callCount).toBe(1)
-    expect(type.encode.bytes).toBe(lowtype.encode.bytes * size)
-  })
-
-  test('encodingLength', () => {
-    const size = 4
-    const type = reserved(lowtype, size)
-    const value = 1
-    const length = 2
-
-    lowtype.encodingLength.withArgs(value).returns(length)
-    common.plug(lowtype)
-
-    expect(type.encodingLength(value)).toBe(size * length)
-    expect(lowtype.encodingLength.callCount).toBe(1)
-  })
-
-  test('encodingLength should work when `size` is function', () => {
-    const size = 2
-    const value = 1
-    const context = { node: value }
-    const callback = sinon.stub()
-    const type = reserved(lowtype, callback)
-    const length = 2
-
-    callback.withArgs(context).returns(size)
-    callback.throws('callback')
-
-    lowtype.encodingLength.withArgs(value, context).returns(length)
-    common.plug(lowtype)
-
-    expect(type.encodingLength(value, context)).toBe(size * length)
-    expect(lowtype.encodingLength.callCount).toBe(1)
+      expect(type.encodingLength(value)).toBe(size * length)
+      expect(callback).toHaveBeenCalledTimes(1)
+    })
   })
 })
