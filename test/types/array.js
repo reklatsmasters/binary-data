@@ -1,373 +1,201 @@
-const sinon = require('sinon')
 const array = require('types/array')
-const common = require('testing/common')
 
 describe('array', () => {
   const wstream = {}
   const rstream = {}
 
-  const type = common.makeType()
-
-  afterEach(() => {
-    common.reset(type)
-  })
-
   describe('fixed length', () => {
-    test('encode', () => {
-      const bytes = 7
-      const items = [10, 20]
-
-      type.encode.withArgs(items[0], wstream).returns(1)
-      type.encode.withArgs(items[1], wstream).returns(2)
-
-      common.plug(type, bytes)
-
-      const enctype = array(type, items.length)
-      enctype.encode(items, wstream)
-
-      expect(type.encode.callCount).toBe(2)
-      expect(enctype.encode.bytes).toBe(bytes * items.length)
-    })
-
-    test('encode if length in bytes', () => {
-      const bytes = 7
-      const items = [10, 20]
-      const length = bytes * items.length
-
-      type.encode.withArgs(items[0], wstream).returns(1)
-      type.encode.withArgs(items[1], wstream).returns(2)
-
-      type.encodingLength.withArgs(items[0]).returns(bytes)
-      type.encodingLength.withArgs(items[1]).returns(bytes)
-
-      common.plug(type, bytes)
-
-      const enctype = array(type, length, 'bytes')
-      enctype.encode(items, wstream)
-
-      expect(type.encode.callCount).toBe(items.length)
-      expect(type.encodingLength.callCount).toBe(items.length)
-      expect(enctype.encode.bytes).toBe(length)
-    })
-
-    test('throws when length != items.length', () => {
-      const items = [10, 20]
-
-      const requiredSize = items.length + 1
-      const enctype = array(type, requiredSize)
-
-      expect(() => enctype.encode(items, wstream)).toThrow(
-        `Argument #1 required length ${requiredSize} instead of ${items.length}`
-      )
-    })
-
-    test('decode', () => {
-      const length = 2
-
-      const first = 1
-      const second = 2
-
-      const bytes = 10
-
-      const meta = {
-        bytes: 0,
-        context: null,
-      }
-
-      let calls = 0
-
-      function fake(r, m) {
-        m.bytes += bytes
-
-        switch (++calls) {
-          case 1:
-            return first
-          case 2:
-            return second
-          default:
-            break
-        }
-      }
-
-      const type = {
-        decode: fake,
-        encode() {},
-      }
-
-      const enctype = array(type, length)
-      const items = enctype.decode(rstream, meta)
-
-      expect(Array.isArray(items)).toBe(true)
-      expect(items.length).toEqual(length)
-
-      expect(items[0]).toBe(first)
-      expect(items[1]).toBe(second)
-
-      expect(meta.bytes).toBe(bytes * length)
-    })
-
-    test('decode if length in bytes', () => {
-      const bytes = 3
-      const count = 2
-      const length = count * bytes
-
-      const first = 1
-      const second = 2
-
-      const meta = {
-        bytes: 0,
-        context: null,
-      }
-
-      let calls = 0
-
-      function fake(r, m) {
-        m.bytes += bytes
-
-        switch (++calls) {
-          case 1:
-            return first
-          case 2:
-            return second
-          default:
-            break
-        }
-      }
-
-      const type = {
-        decode: fake,
-        encode() {},
-      }
-
-      const enctype = array(type, length, 'bytes')
-      const items = enctype.decode(rstream, meta)
-
-      expect(Array.isArray(items)).toBe(true)
-      expect(items.length).toEqual(count)
-
-      expect(items[0]).toBe(first)
-      expect(items[1]).toBe(second)
-
-      expect(meta.bytes).toBe(length)
-    })
-
-    test('encodingLength', () => {
-      const obj = [10, 20]
-      const bytes = 3
-
-      type.encodingLength.withArgs(obj[0]).returns(bytes)
-      type.encodingLength.withArgs(obj[1]).returns(bytes)
-      common.plug(type, bytes)
-
-      const schema = array(type, obj.length)
-
-      expect(schema.encodingLength(obj)).toBe(obj.length * bytes)
-    })
-
-    test('encodingLength # length in bytes', () => {
-      const items = [10, 20]
-      const bytes = 3
-      const length = items.length * bytes
-
-      const itemType = {
-        encode() {},
-        decode() {},
-        encodingLength() {
-          return bytes
-        },
-      }
-
-      const type = array(itemType, length, 'bytes')
-
-      expect(type.encodingLength(items)).toBe(length)
-    })
-  })
-
-  describe('length prefix', () => {
-    const lengthType = common.makeType()
-
-    beforeEach(() => {
-      common.reset(lengthType)
-    })
-
-    test('encode', () => {
-      const items = [100, 200, 300]
-
-      lengthType.encode.withArgs(items.length).returns(1)
-      lengthType.encode.throws('lengthType.encode')
-      common.plug(lengthType, 2)
-
-      type.encode.withArgs(items[0], wstream).returns(1)
-      type.encode.withArgs(items[1], wstream).returns(2)
-      type.encode.withArgs(items[2], wstream).returns(3)
-      common.plug(type, 4)
-
-      const enctype = array(type, lengthType)
-      enctype.encode(items, wstream)
-
-      expect(lengthType.encode.callCount).toBe(1)
-      expect(type.encode.callCount).toBe(items.length)
-      expect(enctype.encode.bytes).toBe(
-        type.encode.bytes * items.length + lengthType.encode.bytes
-      )
-      expect(lengthType.encode.calledBefore(type.encode)).toBeTruthy()
-    })
-
-    test('decode', () => {
-      const length = 2
-
-      const first = 1
-      const second = 2
-
-      const bytes = 2
-
-      const meta = {
-        bytes: 0,
-        context: null,
-      }
-
-      let calls = 0
-
-      function fake(r, m) {
-        m.bytes += bytes
-
-        switch (++calls) {
-          case 1:
-            return first
-          case 2:
-            return second
-          default:
-            break
-        }
-      }
-
-      const type = {
-        decode: fake,
-        encode() {},
-      }
-
-      const lengthType = {
-        decode(r, m) {
-          m.bytes += bytes
-          return length
-        },
-        encode() {},
-      }
-
-      const enctype = array(type, lengthType)
-      const items = enctype.decode(rstream, meta)
-
-      expect(Array.isArray(items)).toBeTruthy()
-      expect(items.length).toBe(length)
-
-      expect(items[0]).toBe(first)
-      expect(items[1]).toBe(second)
-
-      expect(meta.bytes).toBe(bytes * length + bytes)
-    })
-
-    test('encodingLength', () => {
-      const obj = [10, 20]
-      const bytes = 3
-      const lengthBytes = 5
-
-      lengthType.encodingLength.withArgs(obj.length).returns(lengthBytes)
-      common.plug(lengthType)
-
-      type.encodingLength.withArgs(obj[0]).returns(bytes)
-      type.encodingLength.withArgs(obj[1]).returns(bytes)
-      common.plug(type, bytes)
-
-      const schema = array(type, lengthType)
-
-      expect(schema.encodingLength(obj)).toBe(obj.length * bytes + lengthBytes)
-    })
-
-    describe('length in bytes', () => {
+    describe('length is the number of items', () => {
       test('encode', () => {
-        const items = [100, 200, 300]
-        const bytes = 5
-        const length = bytes * items.length
+        const itemBytes = 7
+        const items = [10, 20]
+        const wstream = {}
 
-        lengthType.encode.withArgs(length).returns(1)
-        lengthType.encode.throws('lengthType.encode')
-        common.plug(lengthType, bytes)
+        const itemType = {
+          decode() {},
+          encode: jest.fn(),
+        }
 
-        type.encode.withArgs(items[0], wstream).returns(1)
-        type.encode.withArgs(items[1], wstream).returns(2)
-        type.encode.withArgs(items[2], wstream).returns(3)
+        itemType.encode.bytes = itemBytes
 
-        type.encodingLength.withArgs(items[0]).returns(bytes)
-        type.encodingLength.withArgs(items[1]).returns(bytes)
-        type.encodingLength.withArgs(items[2]).returns(bytes)
+        const type = array(itemType, items.length)
+        type.encode(items, wstream)
 
-        common.plug(type, bytes)
-
-        const enctype = array(type, lengthType, 'bytes')
-        enctype.encode(items, wstream)
-
-        expect(lengthType.encode.callCount).toBe(1)
-        expect(type.encode.callCount).toBe(items.length)
-        expect(enctype.encode.bytes).toBe(length + bytes)
-        expect(lengthType.encode.calledBefore(type.encode)).toBeTruthy()
+        expect(itemType.encode).toHaveBeenCalledTimes(items.length)
+        expect(type.encode.bytes).toBe(itemBytes * items.length)
       })
 
-      test('encodingLength', () => {
-        const obj = [10, 20]
-        const bytes = 3
-        const lengthBytes = 5
+      test('throws when length != items.length', () => {
+        const items = [10, 20]
+        const wstream = {}
 
-        lengthType.encodingLength
-          .withArgs(obj.length * bytes)
-          .returns(lengthBytes)
-        common.plug(lengthType)
+        const itemType = {
+          decode() {},
+          encode: jest.fn(),
+        }
 
-        type.encodingLength.withArgs(obj[0]).returns(bytes)
-        type.encodingLength.withArgs(obj[1]).returns(bytes)
-        common.plug(type, bytes)
+        const requiredSize = items.length + 1
+        const type = array(itemType, requiredSize)
 
-        const schema = array(type, lengthType, 'bytes')
-
-        expect(schema.encodingLength(obj)).toBe(
-          obj.length * bytes + lengthBytes
+        expect(() => type.encode(items, wstream)).toThrow(
+          `Argument #1 required length ${requiredSize} instead of ${
+            items.length
+          }`
         )
-      })
-    })
-
-    describe('user defined types', () => {
-      test('encode', () => {
-        const items = [{ a: 100 }, { a: 200 }, { a: 300 }]
-        const bytes = 4
-        const lengthBytes = 2
-
-        lengthType.encode.withArgs(items.length).returns(1)
-        common.plug(lengthType, lengthBytes)
-
-        const schema = {
-          a: common.makeType(),
-        }
-
-        schema.a.encode.withArgs(items[0].a, wstream).returns(1)
-        schema.a.encode.withArgs(items[1].a, wstream).returns(2)
-        schema.a.encode.withArgs(items[2].a, wstream).returns(3)
-        common.plug(schema.a, bytes)
-
-        const enctype = array(schema, lengthType)
-        enctype.encode(items, wstream)
-
-        expect(lengthType.encode.callCount).toBe(1)
-        expect(schema.a.encode.callCount).toBe(items.length)
-        expect(enctype.encode.bytes).toBe(lengthBytes + bytes * items.length)
-        expect(lengthType.encode.calledBefore(type.encode)).toBeTruthy()
       })
 
       test('decode', () => {
         const length = 2
+        const bytes = 10
 
-        const firstItem = 1
-        const secondItem = 2
+        const first = 1
+        const second = 2
+        const items = [first, second]
 
-        const bytes = 2
+        const meta = {
+          bytes: 0,
+          context: {},
+        }
+
+        const itemType = {
+          decode(r, m) {
+            m.bytes += bytes
+            return items.shift()
+          },
+          encode() {},
+        }
+
+        const type = array(itemType, length)
+
+        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(meta.bytes).toBe(bytes * length)
+      })
+
+      test('encodingLength', () => {
+        const items = [10, 20]
+        const bytes = 3
+
+        const itemType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return bytes
+          },
+        }
+
+        const type = array(itemType, items.length)
+
+        expect(type.encodingLength(items)).toBe(items.length * bytes)
+      })
+    })
+
+    describe('length is the number of bytes', () => {
+      test('encode', () => {
+        const bytes = 7
+        const items = [10, 20]
+        const length = bytes * items.length
+
+        const itemType = {
+          encode: jest.fn(),
+          decode() {},
+          encodingLength() {
+            return bytes
+          },
+        }
+
+        itemType.encode.bytes = bytes
+
+        const type = array(itemType, length, 'bytes')
+        type.encode(items, wstream)
+
+        expect(itemType.encode).toHaveBeenCalledTimes(items.length)
+        expect(type.encode.bytes).toBe(length)
+      })
+
+      test('decode', () => {
+        const first = 1
+        const second = 2
+        const items = [first, second]
+
+        const bytes = 3
+        const length = bytes * items.length
+
+        const meta = {
+          bytes: 0,
+          context: {},
+        }
+
+        const itemType = {
+          decode(r, m) {
+            m.bytes += bytes
+            return items.shift()
+          },
+          encode() {},
+        }
+
+        const type = array(itemType, length, 'bytes')
+
+        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(meta.bytes).toBe(length)
+      })
+
+      test('encodingLength', () => {
+        const items = [10, 20]
+        const bytes = 3
+        const length = items.length * bytes
+
+        const itemType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return bytes
+          },
+        }
+
+        const type = array(itemType, length, 'bytes')
+
+        expect(type.encodingLength(items)).toBe(length)
+      })
+    })
+  })
+
+  describe('length is type', () => {
+    describe('length is the number of items', () => {
+      test('encode', () => {
+        const items = [100, 200, 300]
+
+        const lengthType = {
+          decode() {},
+          encode: jest.fn(),
+        }
+
+        lengthType.encode.bytes = 2
+
+        const itemType = {
+          decode() {},
+          encode: jest.fn(),
+        }
+
+        itemType.encode.bytes = 3
+
+        const type = array(itemType, lengthType)
+        type.encode(items, wstream)
+
+        expect(lengthType.encode).toHaveBeenCalledTimes(1)
+        expect(lengthType.encode).toBeCalledWith(items.length, wstream)
+        expect(itemType.encode).toHaveBeenCalledTimes(items.length)
+        expect(type.encode.bytes).toBe(
+          itemType.encode.bytes * items.length + lengthType.encode.bytes
+        )
+      })
+
+      test('decode', () => {
+        const first = 1
+        const second = 2
+        const items = [first, second]
+
+        const length = items.length
+        const itemBytes = 3
         const lengthBytes = 3
 
         const meta = {
@@ -375,23 +203,11 @@ describe('array', () => {
           context: {},
         }
 
-        let calls = 0
-
-        function decodeItem(r, m) {
-          m.bytes += bytes
-
-          switch (++calls) {
-            case 1:
-              return firstItem
-            case 2:
-              return secondItem
-            default:
-              break
-          }
-        }
-
         const itemType = {
-          decode: decodeItem,
+          decode(r, m) {
+            m.bytes += itemBytes
+            return items.shift()
+          },
           encode() {},
         }
 
@@ -403,218 +219,370 @@ describe('array', () => {
           encode() {},
         }
 
-        const schema = {
-          a: itemType,
+        const type = array(itemType, lengthType)
+
+        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(meta.bytes).toBe(itemBytes * length + lengthBytes)
+      })
+
+      test('encodingLength', () => {
+        const items = [10, 20]
+        const itemBytes = 3
+        const lengthBytes = 5
+
+        const lengthType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return lengthBytes
+          },
         }
 
-        const type = array(schema, lengthType)
-        const items = type.decode(rstream, meta)
+        const itemType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return itemBytes
+          },
+        }
 
-        expect(Array.isArray(items)).toBe(true)
-        expect(items.length).toEqual(length)
+        const type = array(itemType, lengthType)
 
-        expect(items[0]).toEqual({ a: firstItem })
-        expect(items[1]).toEqual({ a: secondItem })
+        expect(type.encodingLength(items)).toBe(
+          items.length * itemBytes + lengthBytes
+        )
+      })
+    })
 
-        expect(meta.bytes).toBe(bytes * length + lengthBytes)
+    describe('length is the number of bytes', () => {
+      test('encode', () => {
+        const items = [100, 200, 300]
+        const itemBytes = 4
+
+        const lengthType = {
+          decode() {},
+          encode: jest.fn(),
+        }
+
+        lengthType.encode.bytes = 2
+
+        const itemType = {
+          decode() {},
+          encode: jest.fn(),
+          encodingLength() {
+            return itemBytes
+          },
+        }
+
+        itemType.encode.bytes = itemBytes
+
+        const type = array(itemType, lengthType, 'bytes')
+        type.encode(items, wstream)
+
+        expect(lengthType.encode).toHaveBeenCalledTimes(1)
+        expect(lengthType.encode).toBeCalledWith(
+          items.length * itemBytes,
+          wstream
+        )
+        expect(itemType.encode).toHaveBeenCalledTimes(items.length)
+        expect(type.encode.bytes).toBe(
+          itemBytes * items.length + lengthType.encode.bytes
+        )
+      })
+
+      test('decode', () => {
+        const first = 1
+        const second = 2
+        const items = [first, second]
+
+        const length = items.length
+        const itemBytes = 3
+        const lengthBytes = 3
+
+        const meta = {
+          bytes: 0,
+          context: {},
+        }
+
+        const itemType = {
+          decode(r, m) {
+            m.bytes += itemBytes
+            return items.shift()
+          },
+          encode() {},
+        }
+
+        const lengthType = {
+          decode(r, m) {
+            m.bytes += lengthBytes
+            return length * itemBytes
+          },
+          encode() {},
+        }
+
+        const type = array(itemType, lengthType, 'bytes')
+
+        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(meta.bytes).toBe(itemBytes * length + lengthBytes)
+      })
+
+      test('encodingLength', () => {
+        const items = [10, 20]
+        const itemBytes = 3
+        const lengthBytes = 5
+
+        const lengthType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return lengthBytes
+          },
+        }
+
+        const itemType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return itemBytes
+          },
+        }
+
+        const type = array(itemType, lengthType, 'bytes')
+
+        expect(type.encodingLength(items)).toBe(
+          items.length * itemBytes + lengthBytes
+        )
       })
     })
   })
 
-  describe('length function', () => {
-    test('decode', () => {
-      const expectedContext = {
-        node: {},
-      }
-
-      const expectLength = 2
-      const bytes = 2
-
-      const first = 1
-      const second = 2
-
-      const meta = {
-        bytes: 0,
-        context: expectedContext,
-      }
-
-      let calls = 0
-
-      function fake(r, m) {
-        m.bytes += bytes
-
-        switch (++calls) {
-          case 1:
-            return first
-          case 2:
-            return second
-          default:
-            break
-        }
-      }
-
-      const type = {
-        decode: fake,
-        encode() {},
-      }
-
-      const callback = sinon.stub()
-
-      callback.withArgs(expectedContext).returns(expectLength)
-      callback.throws('callback')
-
-      const enctype = array(type, callback)
-      const items = enctype.decode(rstream, meta)
-
-      expect(Array.isArray(items)).toBe(true)
-      expect(items.length).toEqual(expectLength)
-
-      expect(callback.callCount).toBe(1)
-
-      expect(items[0]).toBe(first)
-      expect(items[1]).toBe(second)
-
-      expect(meta.bytes).toBe(bytes * expectLength)
-    })
-
-    test('decode if length in bytes', () => {
-      const expectedContext = {
-        node: {},
-      }
-
-      const bytes = 2
-      const count = 2
-      const expectLength = bytes * count
-
-      const first = 1
-      const second = 2
-
-      const meta = {
-        bytes: 0,
-        context: expectedContext,
-      }
-
-      let calls = 0
-
-      function fake(r, m) {
-        m.bytes += bytes
-
-        switch (++calls) {
-          case 1:
-            return first
-          case 2:
-            return second
-          default:
-            break
-        }
-      }
-
-      const type = {
-        decode: fake,
-        encode() {},
-      }
-
-      const callback = sinon.stub()
-
-      callback.withArgs(expectedContext).returns(expectLength)
-      callback.throws('callback')
-
-      const enctype = array(type, callback, 'bytes')
-      const items = enctype.decode(rstream, meta)
-
-      expect(Array.isArray(items)).toBe(true)
-      expect(items.length).toEqual(count)
-
-      expect(callback.callCount).toBe(1)
-
-      expect(items[0]).toBe(first)
-      expect(items[1]).toBe(second)
-
-      expect(meta.bytes).toBe(expectLength)
-    })
-
+  describe('item is an user defined type', () => {
     test('encode', () => {
-      const items = [100, 200, 300]
+      const items = [{ a: 100 }, { a: 200 }, { a: 300 }]
+      const itemBytes = 4
 
-      const context = {
-        node: {},
+      const schema = {
+        a: {
+          encode: jest.fn(),
+          decode() {},
+        },
       }
 
-      const bytes = 4
+      schema.a.encode.bytes = itemBytes
 
-      const callback = sinon.stub()
-      callback.withArgs(context).returns(items.length)
-      callback.throws('callback')
+      const type = array(schema, items.length)
+      type.encode(items, wstream)
 
-      type.encode.withArgs(items[0], wstream).returns(1)
-      type.encode.withArgs(items[1], wstream).returns(2)
-      type.encode.withArgs(items[2], wstream).returns(3)
-      common.plug(type, bytes)
-
-      const enctype = array(type, callback)
-      enctype.encode(items, wstream, context)
-
-      expect(callback.callCount).toBe(1)
-      expect(type.encode.callCount).toBe(items.length)
-      expect(enctype.encode.bytes).toBe(bytes * items.length)
+      expect(schema.a.encode).toHaveBeenCalledTimes(items.length)
+      expect(type.encode.bytes).toBe(itemBytes * items.length)
     })
 
-    test('encode if length in bytes', () => {
-      const items = [100, 200, 300]
+    test('decode', () => {
+      const firstItem = 1
+      const secondItem = 2
+      const items = [firstItem, secondItem]
 
-      const context = {
-        node: {},
+      const length = items.length
+      const itemBytes = 2
+
+      const meta = {
+        bytes: 0,
+        context: {},
       }
 
-      const bytes = 4
+      const itemType = {
+        decode(r, m) {
+          m.bytes += itemBytes
+          return items.shift()
+        },
+        encode() {},
+      }
 
-      const callback = sinon.stub()
-      callback.withArgs(context).returns(bytes * items.length)
-      callback.throws('callback')
+      const schema = {
+        a: itemType,
+      }
 
-      type.encode.withArgs(items[0], wstream).returns(1)
-      type.encode.withArgs(items[1], wstream).returns(2)
-      type.encode.withArgs(items[2], wstream).returns(3)
+      const type = array(schema, length)
 
-      type.encodingLength.withArgs(items[0]).returns(bytes)
-      type.encodingLength.withArgs(items[1]).returns(bytes)
-      type.encodingLength.withArgs(items[2]).returns(bytes)
-
-      common.plug(type, bytes)
-
-      const enctype = array(type, callback, 'bytes')
-      enctype.encode(items, wstream, context)
-
-      expect(callback.callCount).toBe(1)
-      expect(type.encode.callCount).toBe(items.length)
-      expect(enctype.encode.bytes).toBe(bytes * items.length)
+      expect(type.decode(rstream, meta)).toEqual([
+        { a: firstItem },
+        { a: secondItem },
+      ])
+      expect(meta.bytes).toBe(itemBytes * length)
     })
 
     test('encodingLength', () => {
-      const obj = [10, 20]
-      const bytes = 3
+      const itemBytes = 3
+      const items = [{ a: 100 }, { a: 200 }, { a: 300 }]
 
-      type.encodingLength.withArgs(obj[0]).returns(bytes)
-      type.encodingLength.withArgs(obj[1]).returns(bytes)
-      common.plug(type, bytes)
+      const schema = {
+        a: {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return itemBytes
+          },
+        },
+      }
 
-      const schema = array(type, () => {})
+      const type = array(schema, items.length)
 
-      expect(schema.encodingLength(obj)).toBe(obj.length * bytes)
+      expect(type.encodingLength(items)).toBe(itemBytes * items.length)
+    })
+  })
+
+  describe('length is function', () => {
+    describe('length is the number of items', () => {
+      test('decode', () => {
+        const first = 1
+        const second = 2
+        const items = [first, second]
+
+        const length = items.length
+        const bytes = 3
+
+        const meta = {
+          bytes: 0,
+          context: {},
+        }
+
+        const itemType = {
+          decode(r, m) {
+            m.bytes += bytes
+            return items.shift()
+          },
+          encode() {},
+        }
+
+        const callback = jest.fn().mockImplementation(() => length)
+
+        const type = array(itemType, callback)
+
+        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(callback).toBeCalledWith(meta.context)
+        expect(meta.bytes).toBe(bytes * length)
+      })
+
+      test('encode', () => {
+        const items = [100, 200, 300]
+        const length = items.length
+        const context = {}
+        const bytes = 4
+
+        const itemType = {
+          decode() {},
+          encode: jest.fn(),
+        }
+
+        itemType.encode.bytes = bytes
+
+        const callback = jest.fn().mockImplementation(() => length)
+
+        const type = array(itemType, callback)
+        type.encode(items, wstream, context)
+
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(callback).toBeCalledWith(context)
+        expect(itemType.encode).toHaveBeenCalledTimes(items.length)
+        expect(type.encode.bytes).toBe(bytes * items.length)
+      })
+
+      test('encodingLength', () => {
+        const items = [10, 20]
+        const bytes = 3
+
+        const itemType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return bytes
+          },
+        }
+
+        const type = array(itemType, () => {})
+
+        expect(type.encodingLength(items)).toBe(items.length * bytes)
+      })
     })
 
-    test('encodingLength # length in bytes', () => {
-      const obj = [10, 20]
-      const bytes = 3
-      const length = obj.length * bytes
+    describe('length is the number of bytes', () => {
+      test('decode', () => {
+        const first = 1
+        const second = 2
+        const items = [first, second]
 
-      type.encodingLength.withArgs(obj[0]).returns(bytes)
-      type.encodingLength.withArgs(obj[1]).returns(bytes)
-      common.plug(type, bytes)
+        const bytes = 3
+        const length = items.length
 
-      const schema = array(type, () => {}, 'bytes')
+        const meta = {
+          bytes: 0,
+          context: {},
+        }
 
-      expect(schema.encodingLength(obj)).toBe(length)
+        const itemType = {
+          decode(r, m) {
+            m.bytes += bytes
+            return items.shift()
+          },
+          encode() {},
+        }
+
+        const callback = jest.fn().mockImplementation(() => length * bytes)
+
+        const type = array(itemType, callback, 'bytes')
+
+        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(callback).toBeCalledWith(meta.context)
+        expect(meta.bytes).toBe(length * bytes)
+      })
+
+      test('encode', () => {
+        const items = [100, 200, 300]
+        const context = {}
+
+        const bytes = 4
+        const length = items.length
+
+        const callback = jest.fn().mockImplementation(() => length * bytes)
+
+        const itemType = {
+          decode() {},
+          encode: jest.fn(),
+          encodingLength() {
+            return bytes
+          },
+        }
+
+        itemType.encode.bytes = bytes
+
+        const type = array(itemType, callback, 'bytes')
+        type.encode(items, wstream, context)
+
+        expect(callback).toHaveBeenCalledTimes(1)
+        expect(callback).toBeCalledWith(context)
+        expect(itemType.encode).toHaveBeenCalledTimes(length)
+        expect(type.encode.bytes).toBe(bytes * length)
+      })
+
+      test('encodingLength', () => {
+        const items = [10, 20]
+        const bytes = 3
+        const length = items.length * bytes
+
+        const itemType = {
+          encode() {},
+          decode() {},
+          encodingLength() {
+            return bytes
+          },
+        }
+
+        const schema = array(itemType, () => {}, 'bytes')
+
+        expect(schema.encodingLength(items)).toBe(length)
+      })
     })
   })
 })
