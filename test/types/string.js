@@ -31,14 +31,10 @@ describe('string', () => {
         length: expectedLength,
       }
 
-      const meta = {
-        bytes: 0,
-      }
-
       const type = string(null)
 
-      expect(type.decode(rstream, meta)).toEqual(expectedValue)
-      expect(meta.bytes).toEqual(expectedLength)
+      expect(type.decode(rstream)).toEqual(expectedValue)
+      expect(type.decode.bytes).toEqual(expectedLength)
       expect(rstream.readBuffer).toBeCalledWith(expectedLength)
     })
 
@@ -73,12 +69,8 @@ describe('string', () => {
       }
       const type = string(length)
 
-      const meta = {
-        bytes: 0,
-      }
-
-      expect(type.decode(rstream, meta)).toEqual(str)
-      expect(meta.bytes).toEqual(length)
+      expect(type.decode(rstream)).toEqual(str)
+      expect(type.decode.bytes).toEqual(length)
     })
 
     test('encodingLength', () => {
@@ -129,19 +121,14 @@ describe('string', () => {
 
       const lengthType = {
         encode() {},
-        decode(rstream, meta) {
-          meta.bytes += lengthBytes
-          return length
-        },
+        decode: () => length,
       }
+
+      lengthType.decode.bytes = lengthBytes
       const type = string(lengthType)
 
-      const meta = {
-        bytes: 0,
-      }
-
-      expect(type.decode(rstream, meta)).toEqual(str)
-      expect(meta.bytes).toEqual(length + lengthBytes)
+      expect(type.decode(rstream)).toEqual(str)
+      expect(type.decode.bytes).toEqual(length + lengthBytes)
     })
 
     test('encodingLength', () => {
@@ -198,20 +185,14 @@ describe('string', () => {
         readBuffer,
       }
 
-      const meta = {
-        bytes: 0,
-        context: {},
-      }
-
       const callback = jest.fn().mockImplementation(() => length)
       const type = string(callback)
 
-      expect(type.decode(rstream, meta)).toBe(str)
+      expect(type.decode(rstream)).toBe(str)
       expect(readBuffer).toHaveBeenCalledTimes(1)
       expect(readBuffer).toBeCalledWith(length)
       expect(callback).toHaveBeenCalledTimes(1)
-      expect(callback).toBeCalledWith(meta.context)
-      expect(meta.bytes).toBe(length)
+      expect(type.decode.bytes).toBe(length)
     })
 
     test('encodingLength', () => {

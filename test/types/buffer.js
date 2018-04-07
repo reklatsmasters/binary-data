@@ -34,10 +34,6 @@ describe('buffer', () => {
     })
 
     test('decode', () => {
-      const meta = {
-        bytes: 0,
-      }
-
       const length = 2
       const buf = Buffer.allocUnsafe(length)
 
@@ -48,10 +44,10 @@ describe('buffer', () => {
 
       const type = buffer(length)
 
-      expect(type.decode(rstream, meta)).toBe(buf)
+      expect(type.decode(rstream)).toBe(buf)
       expect(readBuffer).toHaveBeenCalledTimes(1)
       expect(readBuffer).toBeCalledWith(length)
-      expect(meta.bytes).toBe(length)
+      expect(type.decode.bytes).toBe(length)
     })
 
     test('encodingLength', () => {
@@ -101,24 +97,19 @@ describe('buffer', () => {
         readBuffer,
       }
 
-      const meta = {
-        bytes: 0,
-      }
-
       const lengthType = {
-        decode(rstream, meta) {
-          meta.bytes += lengthBytes
-          return length
-        },
+        decode: () => length,
         encode() {},
       }
 
+      lengthType.decode.bytes = lengthBytes
+
       const type = buffer(lengthType)
 
-      expect(type.decode(rstream, meta)).toBe(buf)
+      expect(type.decode(rstream)).toBe(buf)
       expect(readBuffer).toHaveBeenCalledTimes(1)
       expect(readBuffer).toBeCalledWith(length)
-      expect(meta.bytes).toBe(buf.length + lengthBytes)
+      expect(type.decode.bytes).toBe(buf.length + lengthBytes)
     })
 
     test('encodingLength', () => {
@@ -151,20 +142,14 @@ describe('buffer', () => {
         readBuffer,
       }
 
-      const meta = {
-        bytes: 0,
-        context: {},
-      }
-
       const callback = jest.fn().mockImplementation(() => length)
       const type = buffer(callback)
 
-      expect(type.decode(rstream, meta)).toBe(buf)
+      expect(type.decode(rstream)).toBe(buf)
       expect(readBuffer).toHaveBeenCalledTimes(1)
       expect(readBuffer).toBeCalledWith(length)
       expect(callback).toHaveBeenCalledTimes(1)
-      expect(callback).toBeCalledWith(meta.context)
-      expect(meta.bytes).toBe(length)
+      expect(type.decode.bytes).toBe(length)
     })
 
     test('encode', () => {

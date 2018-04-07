@@ -44,22 +44,19 @@ describe('bool', () => {
     const itemBytes = 10
 
     const itemType = {
-      decode(rstream, meta) {
-        meta.bytes += itemBytes
+      decode() {
         return 1
       },
       encode() {},
     }
 
-    const meta = {
-      bytes: 0,
-    }
+    itemType.decode.bytes = itemBytes
 
     const type = bool(itemType)
-    const result = type.decode(rstream, meta)
+    const result = type.decode(rstream)
 
     expect(result).toBe(true)
-    expect(meta.bytes).toBe(itemBytes)
+    expect(type.decode.bytes).toBe(itemBytes)
   })
 
   test('decode negative', () => {
@@ -67,12 +64,13 @@ describe('bool', () => {
     const itemBytes = 10
 
     const itemType = {
-      decode(rstream, meta) {
-        meta.bytes += itemBytes
+      decode() {
         return 0
       },
       encode() {},
     }
+
+    itemType.decode.bytes = itemBytes
 
     const meta = {
       bytes: 0,
@@ -82,7 +80,7 @@ describe('bool', () => {
     const result = type.decode(rstream, meta)
 
     expect(result).toBe(false)
-    expect(meta.bytes).toBe(itemBytes)
+    expect(type.decode.bytes).toBe(itemBytes)
   })
 
   test('encodingLength', () => {

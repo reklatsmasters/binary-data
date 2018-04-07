@@ -26,22 +26,17 @@ describe('reserved', () => {
       const bytes = 3
 
       const itemType = {
-        decode: jest.fn().mockImplementation((r, meta) => {
-          meta.bytes += bytes
-        }),
+        decode: jest.fn(),
         encode() {},
       }
 
-      const meta = {
-        bytes: 0,
-        context: {},
-      }
+      itemType.decode.bytes = bytes
 
       const type = reserved(itemType, size)
 
-      expect(type.decode(rstream, meta)).toBeUndefined()
+      expect(type.decode(rstream)).toBeUndefined()
       expect(itemType.decode).toHaveBeenCalledTimes(size)
-      expect(meta.bytes).toEqual(size * bytes)
+      expect(type.decode.bytes).toEqual(size * bytes)
     })
 
     test('encodingLength', () => {
@@ -69,25 +64,19 @@ describe('reserved', () => {
       const size = 2
       const rstream = {}
 
-      const meta = {
-        context: {},
-        bytes: 0,
-      }
-
       const callback = jest.fn().mockImplementation(() => size)
 
       const itemType = {
-        decode: jest.fn().mockImplementation((r, meta) => {
-          meta.bytes += bytes
-        }),
+        decode: jest.fn(),
         encode() {},
       }
 
+      itemType.decode.bytes = bytes
       const type = reserved(itemType, callback)
 
-      expect(type.decode(rstream, meta)).toBeUndefined()
+      expect(type.decode(rstream)).toBeUndefined()
       expect(callback).toHaveBeenCalledTimes(1)
-      expect(meta.bytes).toBe(bytes * size)
+      expect(type.decode.bytes).toBe(bytes * size)
     })
 
     test('encode', () => {

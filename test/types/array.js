@@ -52,23 +52,19 @@ describe('array', () => {
         const second = 2
         const items = [first, second]
 
-        const meta = {
-          bytes: 0,
-          context: {},
-        }
-
         const itemType = {
-          decode(r, m) {
-            m.bytes += bytes
+          decode() {
             return items.shift()
           },
           encode() {},
         }
 
+        itemType.decode.bytes = bytes
+
         const type = array(itemType, length)
 
-        expect(type.decode(rstream, meta)).toEqual([first, second])
-        expect(meta.bytes).toBe(bytes * length)
+        expect(type.decode(rstream)).toEqual([first, second])
+        expect(type.decode.bytes).toBe(bytes * length)
       })
 
       test('encodingLength', () => {
@@ -126,17 +122,17 @@ describe('array', () => {
         }
 
         const itemType = {
-          decode(r, m) {
-            m.bytes += bytes
+          decode() {
             return items.shift()
           },
           encode() {},
         }
 
+        itemType.decode.bytes = bytes
         const type = array(itemType, length, 'bytes')
 
         expect(type.decode(rstream, meta)).toEqual([first, second])
-        expect(meta.bytes).toBe(length)
+        expect(type.decode.bytes).toBe(length)
       })
 
       test('encodingLength', () => {
@@ -198,31 +194,28 @@ describe('array', () => {
         const itemBytes = 3
         const lengthBytes = 3
 
-        const meta = {
-          bytes: 0,
-          context: {},
-        }
-
         const itemType = {
-          decode(r, m) {
-            m.bytes += itemBytes
+          decode() {
             return items.shift()
           },
           encode() {},
         }
 
+        itemType.decode.bytes = itemBytes
+
         const lengthType = {
-          decode(r, m) {
-            m.bytes += lengthBytes
+          decode() {
             return length
           },
           encode() {},
         }
 
+        lengthType.decode.bytes = lengthBytes
+
         const type = array(itemType, lengthType)
 
-        expect(type.decode(rstream, meta)).toEqual([first, second])
-        expect(meta.bytes).toBe(itemBytes * length + lengthBytes)
+        expect(type.decode(rstream)).toEqual([first, second])
+        expect(type.decode.bytes).toBe(itemBytes * length + lengthBytes)
       })
 
       test('encodingLength', () => {
@@ -299,31 +292,28 @@ describe('array', () => {
         const itemBytes = 3
         const lengthBytes = 3
 
-        const meta = {
-          bytes: 0,
-          context: {},
-        }
-
         const itemType = {
-          decode(r, m) {
-            m.bytes += itemBytes
+          decode() {
             return items.shift()
           },
           encode() {},
         }
 
+        itemType.decode.bytes = itemBytes
+
         const lengthType = {
-          decode(r, m) {
-            m.bytes += lengthBytes
+          decode() {
             return length * itemBytes
           },
           encode() {},
         }
 
+        lengthType.decode.bytes = lengthBytes
+
         const type = array(itemType, lengthType, 'bytes')
 
-        expect(type.decode(rstream, meta)).toEqual([first, second])
-        expect(meta.bytes).toBe(itemBytes * length + lengthBytes)
+        expect(type.decode(rstream)).toEqual([first, second])
+        expect(type.decode.bytes).toBe(itemBytes * length + lengthBytes)
       })
 
       test('encodingLength', () => {
@@ -385,18 +375,14 @@ describe('array', () => {
       const length = items.length
       const itemBytes = 2
 
-      const meta = {
-        bytes: 0,
-        context: {},
-      }
-
       const itemType = {
-        decode(r, m) {
-          m.bytes += itemBytes
+        decode() {
           return items.shift()
         },
         encode() {},
       }
+
+      itemType.decode.bytes = itemBytes
 
       const schema = {
         a: itemType,
@@ -404,11 +390,11 @@ describe('array', () => {
 
       const type = array(schema, length)
 
-      expect(type.decode(rstream, meta)).toEqual([
+      expect(type.decode(rstream)).toEqual([
         { a: firstItem },
         { a: secondItem },
       ])
-      expect(meta.bytes).toBe(itemBytes * length)
+      expect(type.decode.bytes).toBe(itemBytes * length)
     })
 
     test('encodingLength', () => {
@@ -441,27 +427,21 @@ describe('array', () => {
         const length = items.length
         const bytes = 3
 
-        const meta = {
-          bytes: 0,
-          context: {},
-        }
-
         const itemType = {
-          decode(r, m) {
-            m.bytes += bytes
+          decode() {
             return items.shift()
           },
           encode() {},
         }
 
+        itemType.decode.bytes = bytes
         const callback = jest.fn().mockImplementation(() => length)
 
         const type = array(itemType, callback)
 
-        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(type.decode(rstream)).toEqual([first, second])
         expect(callback).toHaveBeenCalledTimes(1)
-        expect(callback).toBeCalledWith(meta.context)
-        expect(meta.bytes).toBe(bytes * length)
+        expect(type.decode.bytes).toBe(bytes * length)
       })
 
       test('encode', () => {
@@ -515,27 +495,21 @@ describe('array', () => {
         const bytes = 3
         const length = items.length
 
-        const meta = {
-          bytes: 0,
-          context: {},
-        }
-
         const itemType = {
-          decode(r, m) {
-            m.bytes += bytes
+          decode() {
             return items.shift()
           },
           encode() {},
         }
 
+        itemType.decode.bytes = bytes
         const callback = jest.fn().mockImplementation(() => length * bytes)
 
         const type = array(itemType, callback, 'bytes')
 
-        expect(type.decode(rstream, meta)).toEqual([first, second])
+        expect(type.decode(rstream)).toEqual([first, second])
         expect(callback).toHaveBeenCalledTimes(1)
-        expect(callback).toBeCalledWith(meta.context)
-        expect(meta.bytes).toBe(length * bytes)
+        expect(type.decode.bytes).toBe(length * bytes)
       })
 
       test('encode', () => {

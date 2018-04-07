@@ -18,13 +18,9 @@ describe('doublebe', () => {
     const value = 1
     const readDoubleBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readDoubleBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readDoubleBE })).toEqual(value)
     expect(readDoubleBE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(8)
+    expect(numberType.decode.bytes).toEqual(8)
   })
 
   test('size', () => {
@@ -49,13 +45,9 @@ describe('doublele', () => {
     const value = 1
     const readDoubleLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readDoubleLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readDoubleLE })).toEqual(value)
     expect(readDoubleLE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(8)
+    expect(numberType.decode.bytes).toEqual(8)
   })
 
   test('size', () => {
@@ -80,13 +72,9 @@ describe('floatbe', () => {
     const value = 1
     const readFloatBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readFloatBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readFloatBE })).toEqual(value)
     expect(readFloatBE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(4)
+    expect(numberType.decode.bytes).toEqual(4)
   })
 
   test('size', () => {
@@ -111,13 +99,9 @@ describe('floatle', () => {
     const value = 1
     const readFloatLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readFloatLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readFloatLE })).toEqual(value)
     expect(readFloatLE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(4)
+    expect(numberType.decode.bytes).toEqual(4)
   })
 
   test('size', () => {
@@ -142,13 +126,9 @@ describe('int8', () => {
     const value = 1
     const readInt8 = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readInt8 }, meta)).toEqual(value)
+    expect(numberType.decode({ readInt8 })).toEqual(value)
     expect(readInt8).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(1)
+    expect(numberType.decode.bytes).toEqual(1)
   })
 
   test('size', () => {
@@ -173,13 +153,9 @@ describe('uint8', () => {
     const value = 1
     const readUInt8 = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUInt8 }, meta)).toEqual(value)
+    expect(numberType.decode({ readUInt8 })).toEqual(value)
     expect(readUInt8).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(1)
+    expect(numberType.decode.bytes).toEqual(1)
   })
 
   test('size', () => {
@@ -204,13 +180,9 @@ describe('int16be', () => {
     const value = 1
     const readInt16BE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readInt16BE }, meta)).toEqual(value)
+    expect(numberType.decode({ readInt16BE })).toEqual(value)
     expect(readInt16BE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(2)
+    expect(numberType.decode.bytes).toEqual(2)
   })
 
   test('size', () => {
@@ -235,13 +207,9 @@ describe('uint16be', () => {
     const value = 1
     const readUInt16BE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUInt16BE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUInt16BE })).toEqual(value)
     expect(readUInt16BE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(2)
+    expect(numberType.decode.bytes).toEqual(2)
   })
 
   test('size', () => {
@@ -266,13 +234,9 @@ describe('int16le', () => {
     const value = 1
     const readInt16LE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readInt16LE }, meta)).toEqual(value)
+    expect(numberType.decode({ readInt16LE })).toEqual(value)
     expect(readInt16LE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(2)
+    expect(numberType.decode.bytes).toEqual(2)
   })
 
   test('size', () => {
@@ -297,13 +261,9 @@ describe('uint16le', () => {
     const value = 1
     const readUInt16LE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUInt16LE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUInt16LE })).toEqual(value)
     expect(readUInt16LE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(2)
+    expect(numberType.decode.bytes).toEqual(2)
   })
 
   test('size', () => {
@@ -328,13 +288,9 @@ describe('int32be', () => {
     const value = 1
     const readInt32BE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readInt32BE }, meta)).toEqual(value)
+    expect(numberType.decode({ readInt32BE })).toEqual(value)
     expect(readInt32BE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(4)
+    expect(numberType.decode.bytes).toEqual(4)
   })
 
   test('size', () => {
@@ -359,13 +315,9 @@ describe('uint32be', () => {
     const value = 1
     const readUInt32BE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUInt32BE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUInt32BE })).toEqual(value)
     expect(readUInt32BE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(4)
+    expect(numberType.decode.bytes).toEqual(4)
   })
 
   test('size', () => {
@@ -390,13 +342,9 @@ describe('int32le', () => {
     const value = 1
     const readInt32LE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readInt32LE }, meta)).toEqual(value)
+    expect(numberType.decode({ readInt32LE })).toEqual(value)
     expect(readInt32LE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(4)
+    expect(numberType.decode.bytes).toEqual(4)
   })
 
   test('size', () => {
@@ -421,13 +369,9 @@ describe('uint32le', () => {
     const value = 1
     const readUInt32LE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUInt32LE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUInt32LE })).toEqual(value)
     expect(readUInt32LE).toHaveBeenCalledTimes(1)
-    expect(meta.bytes).toEqual(4)
+    expect(numberType.decode.bytes).toEqual(4)
   })
 
   test('size', () => {
@@ -454,14 +398,10 @@ describe('int24be', () => {
     const value = 1
     const readIntBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readIntBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readIntBE })).toEqual(value)
     expect(readIntBE).toHaveBeenCalledTimes(1)
     expect(readIntBE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -488,14 +428,10 @@ describe('uint24be', () => {
     const value = 1
     const readUIntBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUIntBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUIntBE })).toEqual(value)
     expect(readUIntBE).toHaveBeenCalledTimes(1)
     expect(readUIntBE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -522,14 +458,10 @@ describe('int24le', () => {
     const value = 1
     const readIntLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readIntLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readIntLE })).toEqual(value)
     expect(readIntLE).toHaveBeenCalledTimes(1)
     expect(readIntLE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -556,14 +488,10 @@ describe('uint24le', () => {
     const value = 1
     const readUIntLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUIntLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUIntLE })).toEqual(value)
     expect(readUIntLE).toHaveBeenCalledTimes(1)
     expect(readUIntLE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -590,14 +518,10 @@ describe('int40be', () => {
     const value = 1
     const readIntBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readIntBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readIntBE })).toEqual(value)
     expect(readIntBE).toHaveBeenCalledTimes(1)
     expect(readIntBE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -624,14 +548,10 @@ describe('uint40be', () => {
     const value = 1
     const readUIntBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUIntBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUIntBE })).toEqual(value)
     expect(readUIntBE).toHaveBeenCalledTimes(1)
     expect(readUIntBE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -658,14 +578,10 @@ describe('int40le', () => {
     const value = 1
     const readIntLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readIntLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readIntLE })).toEqual(value)
     expect(readIntLE).toHaveBeenCalledTimes(1)
     expect(readIntLE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -692,14 +608,10 @@ describe('uint40le', () => {
     const value = 1
     const readUIntLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUIntLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUIntLE })).toEqual(value)
     expect(readUIntLE).toHaveBeenCalledTimes(1)
     expect(readUIntLE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -726,14 +638,10 @@ describe('int48be', () => {
     const value = 1
     const readIntBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readIntBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readIntBE })).toEqual(value)
     expect(readIntBE).toHaveBeenCalledTimes(1)
     expect(readIntBE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -760,14 +668,10 @@ describe('uint48be', () => {
     const value = 1
     const readUIntBE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUIntBE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUIntBE })).toEqual(value)
     expect(readUIntBE).toHaveBeenCalledTimes(1)
     expect(readUIntBE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -794,14 +698,10 @@ describe('int48le', () => {
     const value = 1
     const readIntLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readIntLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readIntLE })).toEqual(value)
     expect(readIntLE).toHaveBeenCalledTimes(1)
     expect(readIntLE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {
@@ -828,14 +728,10 @@ describe('uint48le', () => {
     const value = 1
     const readUIntLE = jest.fn().mockImplementation(() => value)
 
-    const meta = {
-      bytes: 0,
-    }
-
-    expect(numberType.decode({ readUIntLE }, meta)).toEqual(value)
+    expect(numberType.decode({ readUIntLE })).toEqual(value)
     expect(readUIntLE).toHaveBeenCalledTimes(1)
     expect(readUIntLE).toBeCalledWith(size)
-    expect(meta.bytes).toEqual(size)
+    expect(numberType.decode.bytes).toEqual(size)
   })
 
   test('size', () => {

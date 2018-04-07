@@ -87,22 +87,16 @@ describe('when', () => {
     const childValue = 12
 
     const childType = {
-      decode(r, meta) {
-        meta.bytes += childBytes
-        return childValue
-      },
+      decode: () => childValue,
       encode() {},
     }
 
-    const meta = {
-      bytes: 0,
-      context: {},
-    }
+    childType.decode.bytes = childBytes
 
     const type = when(() => true, childType)
 
-    expect(type.decode({}, meta)).toEqual(childValue)
-    expect(meta.bytes).toEqual(childBytes)
+    expect(type.decode({})).toEqual(childValue)
+    expect(type.decode.bytes).toEqual(childBytes)
     expect(type[symbols.skip]).toEqual(false)
   })
 
@@ -111,22 +105,16 @@ describe('when', () => {
     const childValue = 12
 
     const childType = {
-      decode(r, meta) {
-        meta.bytes += childBytes
-        return childValue
-      },
+      decode: () => childValue,
       encode() {},
     }
 
-    const meta = {
-      bytes: 0,
-      context: {},
-    }
+    childType.decode.bytes = childBytes
 
     const type = when(() => false, childType)
 
-    expect(type.decode({}, meta)).toEqual(undefined)
-    expect(meta.bytes).toEqual(0)
+    expect(type.decode({})).toEqual(undefined)
+    expect(type.decode.bytes).toEqual(0)
     expect(type[symbols.skip]).toEqual(true)
   })
 })

@@ -14,18 +14,15 @@ describe('decode', () => {
 
     const schema = {
       a: {
-        decode(rstream, meta) {
-          meta.bytes += bytes
-          return res1
-        },
+        decode: () => res1,
       },
       b: {
-        decode(rstream, meta) {
-          meta.bytes += bytes
-          return res2
-        },
+        decode: () => res2,
       },
     }
+
+    schema.a.decode.bytes = bytes
+    schema.b.decode.bytes = bytes
 
     const expectedResult = {
       a: res1,
@@ -41,21 +38,19 @@ describe('decode', () => {
     const rstream = {}
     const bytes = 10
     const res1 = 100
+    const res2 = 200
 
     const type1 = {
-      decode(rstream, meta) {
-        meta.bytes += bytes
-        return res1
-      },
+      decode: () => res1,
     }
 
     const type2 = {
-      decode(rstream, meta) {
-        meta.bytes += bytes
-        return 200
-      },
+      decode: () => res2,
       encode() {},
     }
+
+    type1.decode.bytes = bytes
+    type2.decode.bytes = bytes
 
     const schema = {
       a: type1,
@@ -73,12 +68,6 @@ describe('decode', () => {
 
   test('should set context', () => {
     const rstream = {}
-
-    const context = {
-      node: {},
-      currentNode: {},
-    }
-
     let called = false
 
     const schema = {
@@ -87,9 +76,13 @@ describe('decode', () => {
       },
     }
 
-    function xdecode(rstream_, meta) {
+    function xdecode(rstream_) {
       expect(rstream_).toBe(rstream)
-      expect(meta.context).toEqual(context)
+      // eslint-disable-next-line no-invalid-this
+      const context = this
+
+      expect(context).toHaveProperty('node', {})
+      expect(context).toHaveProperty('current', {})
       called = true
     }
 
@@ -126,19 +119,16 @@ describe('decode', () => {
     const schema = {
       a: {
         b: {
-          decode(rstream, meta) {
-            meta.bytes += bytes
-            return res1
-          },
+          decode: () => res1,
         },
       },
       c: {
-        decode(rstream, meta) {
-          meta.bytes += bytes
-          return res1
-        },
+        decode: () => res1,
       },
     }
+
+    schema.a.b.decode.bytes = bytes
+    schema.c.decode.bytes = bytes
 
     const expectedResult = {
       a: {
@@ -159,12 +149,11 @@ describe('decode', () => {
 
     const schema = {
       a: {
-        decode(rstream, meta) {
-          meta.bytes += bytes
-          return res1
-        },
+        decode: () => res1,
       },
     }
+
+    schema.a.decode.bytes = bytes
 
     const expectedResult = {
       a: res1,
@@ -184,19 +173,16 @@ describe('decode', () => {
     const res2 = 200
 
     const type1 = {
-      decode(rstream, meta) {
-        meta.bytes += bytes
-        return res1
-      },
+      decode: () => res1,
     }
 
     const type2 = {
-      decode(rstream, meta) {
-        meta.bytes += bytes
-        return res2
-      },
+      decode: () => res2,
       encode() {},
     }
+
+    type1.decode.bytes = bytes
+    type2.decode.bytes = bytes
 
     const schema = {
       a: type1,
@@ -222,19 +208,16 @@ describe('decode', () => {
     const res2 = 200
 
     const type1 = {
-      decode(rstream, meta) {
-        meta.bytes += bytes
-        return res1
-      },
+      decode: () => res1,
     }
 
     const type2 = {
-      decode(rstream, meta) {
-        meta.bytes += bytes
-        return res2
-      },
+      decode: () => res2,
       encode() {},
     }
+
+    type1.decode.bytes = bytes
+    type2.decode.bytes = bytes
 
     const schema = {
       a: type1,

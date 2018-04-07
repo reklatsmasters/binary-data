@@ -7,102 +7,77 @@ describe('select', () => {
   const defaultBytes = 2
 
   const defaultType = {
-    decode(r, meta) {
-      meta.bytes += defaultBytes
-      return defaultValue
-    },
+    decode: () => defaultValue,
     encode() {},
   }
+
+  defaultType.decode.bytes = defaultBytes
 
   const firstValue = 111
   const firstBytes = 3
 
   const firstType = {
-    decode(r, meta) {
-      meta.bytes += firstBytes
-      return firstValue
-    },
+    decode: () => firstValue,
     encode() {},
   }
+
+  firstType.decode.bytes = firstBytes
 
   const secondValue = 222
   const secondBytes = 4
 
   const secondType = {
-    decode(r, meta) {
-      meta.bytes += secondBytes
-      return secondValue
-    },
+    decode: () => secondValue,
     encode() {},
   }
 
-  test('decode first option', () => {
-    const meta = {
-      bytes: 0,
-      context: {},
-    }
+  secondType.decode.bytes = secondBytes
 
+  test('decode first option', () => {
     const type = select(
       when(() => true, firstType),
       when(() => false, secondType),
       defaultType
     )
 
-    expect(type.decode({}, meta)).toEqual(firstValue)
-    expect(meta.bytes).toEqual(firstBytes)
+    expect(type.decode({})).toEqual(firstValue)
+    expect(type.decode.bytes).toEqual(firstBytes)
     expect(type[symbols.skip]).toEqual(false)
   })
 
   test('decode second option', () => {
-    const meta = {
-      bytes: 0,
-      context: {},
-    }
-
     const type = select(
       when(() => false, firstType),
       when(() => true, secondType),
       defaultType
     )
 
-    expect(type.decode({}, meta)).toEqual(secondValue)
-    expect(meta.bytes).toEqual(secondBytes)
+    expect(type.decode({})).toEqual(secondValue)
+    expect(type.decode.bytes).toEqual(secondBytes)
     expect(type[symbols.skip]).toEqual(false)
   })
 
   test('decode default option', () => {
-    const meta = {
-      bytes: 0,
-      context: {},
-    }
-
     const type = select(
       when(() => false, firstType),
       when(() => false, secondType),
       defaultType
     )
 
-    expect(type.decode({}, meta)).toEqual(defaultValue)
-    expect(meta.bytes).toEqual(defaultBytes)
+    expect(type.decode({})).toEqual(defaultValue)
+    expect(type.decode.bytes).toEqual(defaultBytes)
     expect(type[symbols.skip]).toEqual(false)
   })
 
   test('skip after decode', () => {
-    const meta = {
-      bytes: 0,
-      context: true,
-    }
-
     const type = select(
-      when(context => context, firstType),
-      when(context => context, secondType)
+      when(() => false, firstType),
+      when(() => false, secondType)
     )
-    type.decode({}, meta)
+    type.decode({})
 
-    meta.bytes = 0
-    meta.context = false
-    expect(type.decode({}, meta)).toBe(undefined)
-    expect(meta.bytes).toEqual(0)
+    expect(type.decode({})).toBe(undefined)
+    expect(type.decode.bytes).toEqual(0)
     expect(type[symbols.skip]).toEqual(true)
   })
 })
