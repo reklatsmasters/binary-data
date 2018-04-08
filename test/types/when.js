@@ -21,7 +21,7 @@ describe('when', () => {
     type.encode(childValue, wstream, context)
 
     expect(type.encode.bytes).toEqual(childBytes)
-    expect(type.encode.status).toEqual(true)
+    expect(type[symbols.skip]).toEqual(false)
     expect(childType.encode).toHaveBeenCalledTimes(1)
   })
 
@@ -44,7 +44,7 @@ describe('when', () => {
     type.encode(childValue, wstream, context)
 
     expect(type.encode.bytes).toEqual(0)
-    expect(type.encode.status).toEqual(false)
+    expect(type[symbols.skip]).toEqual(true)
     expect(childType.encode).toHaveBeenCalledTimes(0)
   })
 

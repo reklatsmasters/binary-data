@@ -159,20 +159,17 @@ describe('buffer', () => {
         writeBuffer,
       }
 
-      const context = {}
-
       const length = 2
       const buf = Buffer.allocUnsafe(length)
 
       const callback = jest.fn().mockImplementation(() => length)
       const type = buffer(callback)
 
-      type.encode(buf, wstream, context)
+      type.encode(buf, wstream)
 
       expect(writeBuffer).toHaveBeenCalledTimes(1)
       expect(writeBuffer).toBeCalledWith(buf)
       expect(callback).toHaveBeenCalledTimes(1)
-      expect(callback).toBeCalledWith(context)
       expect(type.encode.bytes).toBe(length)
     })
 

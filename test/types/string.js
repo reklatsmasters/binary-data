@@ -160,15 +160,13 @@ describe('string', () => {
       const length = str.length
       const lengthBytes = 3
       const buf = Buffer.from(str, 'ascii')
-      const context = {}
 
       const callback = jest.fn().mockImplementation(() => lengthBytes)
 
       const type = string(callback)
-      type.encode(str, wstream, context)
+      type.encode(str, wstream)
 
       expect(callback).toHaveBeenCalledTimes(1)
-      expect(callback).toBeCalledWith(context)
       expect(writeBuffer).toHaveBeenCalledTimes(1)
       expect(writeBuffer).toBeCalledWith(buf)
       expect(type.encode.bytes).toBe(length)

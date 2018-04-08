@@ -447,7 +447,6 @@ describe('array', () => {
       test('encode', () => {
         const items = [100, 200, 300]
         const length = items.length
-        const context = {}
         const bytes = 4
 
         const itemType = {
@@ -460,10 +459,9 @@ describe('array', () => {
         const callback = jest.fn().mockImplementation(() => length)
 
         const type = array(itemType, callback)
-        type.encode(items, wstream, context)
+        type.encode(items, wstream)
 
         expect(callback).toHaveBeenCalledTimes(1)
-        expect(callback).toBeCalledWith(context)
         expect(itemType.encode).toHaveBeenCalledTimes(items.length)
         expect(type.encode.bytes).toBe(bytes * items.length)
       })
@@ -514,7 +512,6 @@ describe('array', () => {
 
       test('encode', () => {
         const items = [100, 200, 300]
-        const context = {}
 
         const bytes = 4
         const length = items.length
@@ -532,10 +529,9 @@ describe('array', () => {
         itemType.encode.bytes = bytes
 
         const type = array(itemType, callback, 'bytes')
-        type.encode(items, wstream, context)
+        type.encode(items, wstream)
 
         expect(callback).toHaveBeenCalledTimes(1)
-        expect(callback).toBeCalledWith(context)
         expect(itemType.encode).toHaveBeenCalledTimes(length)
         expect(type.encode.bytes).toBe(bytes * length)
       })

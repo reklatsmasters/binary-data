@@ -1,80 +1,65 @@
-const sinon = require('sinon')
 const reserved = require('types/reserved')
-const encode = require('lib/encode')
-const common = require('testing/common')
+const { encode } = require('lib/encode')
 
 describe('encode', () => {
-  const type = common.makeType()
-
-  afterEach(() => {
-    common.reset(type)
-  })
-
   test('should encode objects using schema', () => {
     const wstream = {}
 
     const schema = {
       a: {
-        encode: sinon.stub(),
+        encode: jest.fn(),
       },
       b: {
-        encode: sinon.stub(),
+        encode: jest.fn(),
       },
     }
 
-    const obj = {
+    const object = {
       a: 100,
       b: 200,
     }
 
-    const context = {
-      node: obj,
-    }
-
-    schema.a.encode.withArgs(obj.a, wstream, context).returns(1)
-    schema.a.encode.throws('schema.a.encode')
     schema.a.encode.bytes = 10
-
-    schema.b.encode.withArgs(obj.b, wstream, context).returns(1)
-    schema.b.encode.throws('schema.b.encode')
     schema.b.encode.bytes = 33
 
-    encode(obj, wstream, schema)
+    encode(object, wstream, schema)
 
-    expect(schema.a.encode.callCount).toEqual(1)
-    expect(schema.b.encode.callCount).toEqual(1)
+    expect(schema.a.encode).toHaveBeenCalledTimes(1)
+    expect(schema.b.encode).toHaveBeenCalledTimes(1)
     expect(encode.bytes).toEqual(schema.a.encode.bytes + schema.b.encode.bytes)
   })
 
   test('should encode reserved fields', () => {
     const wstream = {}
 
-    const schema = {
-      a: {
-        encode: sinon.stub(),
-      },
-      b: reserved(type, 1),
+    const bytes1 = 33
+    const bytes2 = 10
+
+    const itemType = {
+      encode: jest.fn(),
+      decode() {},
     }
 
-    sinon.stub(schema.b, 'encode')
+    itemType.encode.bytes = bytes1
 
-    const obj = {
+    const schema = {
+      a: {
+        encode: jest.fn(),
+      },
+      b: reserved(itemType, 1),
+    }
+
+    const object = {
       a: 100,
     }
 
-    schema.a.encode.withArgs(obj.a, wstream).returns(1)
-    schema.a.encode.throws('schema.a.encode')
-    schema.a.encode.bytes = 10
+    schema.a.encode.bytes = bytes2
 
-    schema.b.encode.withArgs(undefined, wstream).returns(1)
-    schema.b.encode.throws('schema.b.encode')
-    schema.b.encode.bytes = 33
+    encode(object, wstream, schema)
 
-    encode(obj, wstream, schema)
-
-    expect(schema.a.encode.callCount).toEqual(1)
-    expect(schema.b.encode.callCount).toEqual(1)
-    expect(encode.bytes).toEqual(schema.a.encode.bytes + schema.b.encode.bytes)
+    expect(schema.a.encode).toBeCalled()
+    expect(itemType.encode).toBeCalled()
+    expect(encode.bytes).toEqual(bytes1 + bytes2)
   })
 
   test('each field should be a valid type', () => {
@@ -84,42 +69,33 @@ describe('encode', () => {
       a: null,
     }
 
-    const expectedError = `Field 'a' has an unknown type.`
+    const expectedError = 'Argument `schema` should be a plain object.'
 
     expect(() => encode({}, wstream, schema)).toThrow(expectedError)
   })
 
   test('schema should be a plain object', () => {
     const wstream = {}
-    const expectedError = 'Argument #3 should be a plain object.'
+    const expectedError = 'Argument `schema` should be a plain object.'
 
     expect(() => encode({}, wstream, 123)).toThrow(expectedError)
     expect(() => encode({}, wstream, '123')).toThrow(expectedError)
     expect(() => encode({}, wstream, /.+/)).toThrow(expectedError)
   })
 
-  test('encoded object should be a plain object', () => {
-    const wstream = {}
-    const expectedError = 'Argument #1 should be a plain object.'
-
-    expect(() => encode(123, wstream, {})).toThrow(expectedError)
-    expect(() => encode('123', wstream, {})).toThrow(expectedError)
-    expect(() => encode(/.+/, wstream, {})).toThrow(expectedError)
-  })
-
   test('should encode nexted objects', () => {
     const wstream = {}
 
-    const encodeType = sinon.stub()
+    const encodeFn = jest.fn()
 
     const schema = {
       a: {
         b: {
-          encode: encodeType,
+          encode: encodeFn,
         },
       },
       c: {
-        encode: encodeType,
+        encode: encodeFn,
       },
     }
 
@@ -130,20 +106,10 @@ describe('encode', () => {
       c: 100,
     }
 
-    const context1 = {
-      node: object.a,
-    }
-
-    const context2 = {
-      node: object,
-    }
-
-    encodeType.withArgs(object.a.b, wstream, context1).returns(1)
-    encodeType.withArgs(object.c, wstream, context2).returns(1)
-    encodeType.throws('encode')
-    encodeType.bytes = 10
+    encodeFn.bytes = 10
 
     encode(object, wstream, schema)
-    expect(encodeType.callCount).toEqual(2)
+    expect(encodeFn).toHaveBeenCalledTimes(2)
+    expect(encode.bytes).toEqual(encodeFn.bytes * 2)
   })
 })
