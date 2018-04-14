@@ -79,7 +79,7 @@ describe('when', () => {
 
     const type = when(() => false, childType)
 
-    expect(type.encodingLength(value)).toBe(bytes)
+    expect(type.encodingLength(value)).toBe(0)
   })
 
   test('decode positive', () => {

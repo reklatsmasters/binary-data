@@ -9,9 +9,9 @@ const numbers = require('types/numbers')
 const when = require('types/when')
 const select = require('types/select')
 
-const encode = require('lib/encode')
+const { encode } = require('lib/encode')
 const { decode } = require('lib/decode')
-const encodingLength = require('lib/encoding-length')
+const { encodingLength } = require('lib/encoding-length')
 
 const types = {
   array,

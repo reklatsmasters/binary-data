@@ -1,34 +1,40 @@
-const encodingLength = require('lib/encoding-length')
-const common = require('testing/common')
+const { encodingLength } = require('lib/encoding-length')
 
 describe('encodingLength', () => {
   test('should use schema', () => {
+    const expectedSize = 5
+
     const schema = {
-      a: common.makeType(),
+      a: {
+        encode() {},
+        decode() {},
+        encodingLength: jest.fn().mockImplementation(() => expectedSize),
+      },
     }
 
     const obj = {
       a: 1,
     }
 
-    const context = {
-      node: obj,
-    }
-
-    const expectedSize = 5
-
-    schema.a.encodingLength.withArgs(obj.a, context).returns(expectedSize)
-    common.plug(schema.a)
-
     expect(encodingLength(obj, schema)).toBe(expectedSize)
-    expect(schema.a.encodingLength.callCount).toBe(1)
+    expect(schema.a.encodingLength).toBeCalled()
   })
 
   test('should support nested schemas', () => {
+    const expectedSize = 5
+
     const schema = {
-      a: common.makeType(),
+      a: {
+        encode() {},
+        decode() {},
+        encodingLength: jest.fn().mockImplementation(() => expectedSize),
+      },
       b: {
-        c: common.makeType(),
+        c: {
+          encode() {},
+          decode() {},
+          encodingLength: jest.fn().mockImplementation(() => expectedSize),
+        },
       },
     }
 
@@ -39,19 +45,8 @@ describe('encodingLength', () => {
       },
     }
 
-    const context = {
-      node: obj,
-    }
-
-    const expectedSize = 5
-
-    schema.a.encodingLength.withArgs(obj.a, context).returns(expectedSize)
-    schema.b.c.encodingLength.withArgs(obj.b.c, context).returns(expectedSize)
-    common.plug(schema.a)
-    common.plug(schema.b.c)
-
     expect(encodingLength(obj, schema)).toBe(expectedSize * 2)
-    expect(schema.a.encodingLength.callCount).toBe(1)
-    expect(schema.b.c.encodingLength.callCount).toBe(1)
+    expect(schema.a.encodingLength).toBeCalled()
+    expect(schema.b.c.encodingLength).toBeCalled()
   })
 })
