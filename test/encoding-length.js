@@ -46,7 +46,7 @@ describe('encodingLength', () => {
     }
 
     expect(encodingLength(obj, schema)).toBe(expectedSize * 2)
-    expect(schema.a.encodingLength).toBeCalled()
-    expect(schema.b.c.encodingLength).toBeCalled()
+    expect(schema.a.encodingLength).toHaveBeenLastCalledWith(obj.a)
+    expect(schema.b.c.encodingLength).toHaveBeenLastCalledWith(obj.b.c)
   })
 })
