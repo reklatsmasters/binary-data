@@ -1,5 +1,6 @@
 const bl = require('bl')
 const DecodeStream = require('streams/decode')
+const NotEnoughDataError = require('lib/not-enough-data-error')
 
 describe('decode', () => {
   test('readBuffer', () => {
@@ -20,11 +21,7 @@ describe('decode', () => {
 
     const requestedBytes = buf.length + 1
 
-    expect(() => stream.readBuffer(requestedBytes)).toThrow(
-      `Not enough data: requested ${requestedBytes} bytes but only ${
-        buf.length
-      } available.`
-    )
+    expect(() => stream.readBuffer(requestedBytes)).toThrow(NotEnoughDataError)
   })
 
   test('default numbers', () => {
