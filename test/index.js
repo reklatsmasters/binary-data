@@ -12,7 +12,6 @@ describe('createDecodeStream', () => {
 
   test('should not accept buffer as first argument', () => {
     expect(binary.createDecodeStream().length).toEqual(0)
-    expect(binary.createDecodeStream(null).length).toEqual(0)
     expect(binary.createDecodeStream({}).length).toEqual(0)
   })
 })

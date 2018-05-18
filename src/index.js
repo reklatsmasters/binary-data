@@ -12,6 +12,8 @@ const select = require('types/select')
 const { encode } = require('lib/encode')
 const { decode } = require('lib/decode')
 const { encodingLength } = require('lib/encoding-length')
+const Transaction = require('lib/transaction')
+const NotEnoughDataError = require('lib/not-enough-data-error')
 
 const types = {
   array,
@@ -28,21 +30,80 @@ for (const type of Object.keys(numbers)) {
 }
 
 /**
- * Creates duplex stream for encode objects
- * into binary data.
+ * Creates transform stream for encode objects
+ * into buffer.
+ * @param {object} [schema]
  * @returns {EncodeStream}
  */
-function createEncodeStream() {
-  return new EncodeStream()
+function createEncodeStream(schema) {
+  return new EncodeStream({
+    schema,
+    transform: transformEncode,
+  })
 }
 
 /**
- * Creates duplex stream for decode binary data.
- * @param {Buffer} [buf]
+ * Creates transform stream for decode binary data.
+ * @param {Buffer|Object} [bufOrSchema]
  * @returns {DecodeStream}
  */
-function createDecodeStream(buf) {
-  return new DecodeStream(buf)
+function createDecodeStream(bufOrSchema) {
+  let schema = null
+  const isBuffer = Buffer.isBuffer(bufOrSchema)
+
+  if (!isBuffer) {
+    schema = bufOrSchema
+  }
+
+  const stream = new DecodeStream({
+    schema,
+    transform: transformDecode,
+  })
+
+  if (isBuffer) {
+    stream.append(bufOrSchema)
+  }
+
+  return stream
+}
+
+function transformEncode(chunk, encoding, cb) {
+  /* eslint-disable no-invalid-this */
+  try {
+    encode(chunk, this, this._schema)
+
+    const buf = this.slice()
+    this.consume(buf.length)
+
+    cb(null, buf)
+  } catch (err) {
+    cb(err)
+  }
+  /* eslint-enable no-invalid-this */
+}
+
+function transformDecode(chunk, encoding, cb) {
+  /* eslint-disable no-invalid-this */
+  this.append(chunk)
+
+  try {
+    while (this.length > 0) {
+      const transaction = new Transaction(this)
+      const data = decode(transaction, this._schema)
+
+      transaction.commit()
+      this.push(data)
+    }
+
+    cb()
+  } catch (err) {
+    if (err instanceof NotEnoughDataError) {
+      cb()
+    } else {
+      cb(err)
+    }
+  }
+  /* eslint-enable no-invalid-this */
 }
 
 module.exports = {

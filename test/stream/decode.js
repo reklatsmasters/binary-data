@@ -1,4 +1,3 @@
-const bl = require('bl')
 const DecodeStream = require('streams/decode')
 const NotEnoughDataError = require('lib/not-enough-data-error')
 
@@ -87,27 +86,5 @@ describe('decode', () => {
       expect(stream[read](suite[1])).toBe(suite[2])
       expect(stream.length).toBe(buf.length - suite[1])
     }
-  })
-
-  test('should support pipes', done => {
-    expect.assertions(5)
-
-    const stream = new DecodeStream()
-    stream.append(Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5, 0x6]))
-
-    expect(stream.readUInt32LE()).toBe(0x04030201)
-    expect(stream.length).toBe(2)
-
-    stream.pipe(
-      bl((err, data) => {
-        expect(err).not.toBeTruthy()
-        expect(data.length).toBe(2)
-        expect(data.readUInt16BE(0)).toBe(0x0506)
-      })
-    )
-
-    stream.once('end', () => {
-      done()
-    })
   })
 })
