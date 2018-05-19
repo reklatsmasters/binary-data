@@ -120,4 +120,5 @@ module.exports = {
   /* Re-export utils */
   EncodeStream,
   DecodeStream,
+  NotEnoughDataError,
 }
