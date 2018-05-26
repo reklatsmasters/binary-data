@@ -28,21 +28,16 @@ socket.on('message', (message) => {
   const packet = decode(message, protocol)
 })
 
-// 2.1 also you can decode messages from streams
+// 2.1 also you may decode messages from streams
 const unicast = require('unicast')
 
 const socket = unicast.createSocket({ /* options */ })
 
 // 2.2 create stream
-const decodeStream = createDecodeStream()
+const input = createDecodeStream(protocol)
 
 // 2.3 connect streams
-socket.pipe(decodeStream)
-
-// 2.4. decode messages chunk by chunk or what you want
-socket.on('data', () => {
-  const packet = decode(decodeStream, protocol)
-})
+socket.pipe(input).on('data', packet => { /* do stuff */ })
 ```
 
 #### encode
@@ -51,7 +46,7 @@ socket.on('data', () => {
 const { encode, createEncodeStream, types: { uint8, buffer } } = require('binary-data')
 
 // 1. define schema
-const helloPacket = {
+const protocol = {
   type: uint8,
   data: buffer(uint8)
 }
@@ -63,19 +58,22 @@ const hello = {
 }
 
 // 3. create encode stream
-const wstream = createEncodeStream()
+const wstream = createEncodeStream(protocol)
 
 // 4. connect streams
 wstream.pipe(socket)
 
-// 5. encode all your data multiple times
-encode(hello, wstream, helloPacket)
+// 5.1. encode all your data
+wstream.write(hello)
 
-// or convert to a buffer
+// 5.2 or use another schema
+encode(anotherPacket, wstream, anotherSchema)
+
+// 5.3 or convert to a buffer
 const buf = wstream.slice()
 ```
 
-See [stun](https://github.com/nodertc/stun) module for complete example.
+See [stun](https://github.com/nodertc/stun) or [dtls](https://github.com/nodertc/dtls) module for complete example.
 
 ## API
 
