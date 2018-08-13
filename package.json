@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "eslint": "^4.19.1",
-    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-prettier": "^3.0.0",
     "eslint-config-xo-space": "^0.18.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-no-use-extend-native": "^0.3.12",
