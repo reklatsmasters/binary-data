@@ -63,7 +63,7 @@ describe('decode', () => {
     }
   })
 
-  test('custom numbers', () => {
+  describe('custom numbers', () => {
     const suites = [
       /* Type, size, test value */
       ['IntBE', 3, 0x7fffff - 1],
@@ -79,12 +79,14 @@ describe('decode', () => {
       const read = 'read' + suite[0]
       const write = 'write' + suite[0]
 
-      buf.fill(0)
-      buf[write](suite[2], 0, suite[1])
-      const stream = new DecodeStream(buf)
+      test(read, () => {
+        buf.fill(0)
+        buf[write](suite[2], 0, suite[1])
+        const stream = new DecodeStream(buf)
 
-      expect(stream[read](suite[1])).toBe(suite[2])
-      expect(stream.length).toBe(buf.length - suite[1])
+        expect(stream[read](suite[1])).toBe(suite[2])
+        expect(stream.length).toBe(buf.length - suite[1])
+      })
     }
   })
 })

@@ -7,7 +7,7 @@ describe('createDecodeStream', () => {
 
     const rstream = binary.createDecodeStream(buf)
     expect(rstream.length).toEqual(length)
-    expect(rstream.readBuffer(length)).toBe(buf)
+    expect(rstream.readBuffer(length)).toEqual(buf)
   })
 
   test('should not accept buffer as first argument', () => {
