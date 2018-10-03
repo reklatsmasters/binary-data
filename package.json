@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "bl": "^2.0.0",
+    "generate-function": "^2.3.1",
     "is-plain-object": "^2.0.3"
   },
   "devDependencies": {
