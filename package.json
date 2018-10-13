@@ -34,7 +34,6 @@
     "node": ">=6"
   },
   "dependencies": {
-    "bl": "^2.0.0",
     "generate-function": "^2.3.1",
     "is-plain-object": "^2.0.3"
   },
@@ -70,7 +69,9 @@
     "extends": "@nodertc",
     "overrides": [
       {
-        "files": [ "test/**/*.js" ],
+        "files": [
+          "test/**/*.js"
+        ],
         "env": {
           "jest": true
         },
@@ -90,13 +91,15 @@
         }
       },
       {
-        "files": [ "benchmark/*.js", "examples/*.js" ],
+        "files": [
+          "benchmark/*.js",
+          "examples/*.js"
+        ],
         "rules": {
           "no-console": "off",
           "require-jsdoc": "off",
           "no-plusplus": "off",
           "no-param-reassign": "off"
-
         }
       }
     ]
