@@ -1,4 +1,6 @@
-const { isType } = require('lib/util')
+'use strict';
+
+const { isType } = require('lib/util');
 
 test('isType', () => {
   expect(
@@ -6,10 +8,10 @@ test('isType', () => {
       encode() {},
       decode() {},
     })
-  ).toBeTruthy()
+  ).toBeTruthy();
 
-  expect(isType({})).toBeFalsy()
-  expect(isType(null)).toBeFalsy()
-  expect(isType({ encode() {} })).toBeFalsy()
-  expect(isType({ decode() {} })).toBeFalsy()
-})
+  expect(isType({})).toBeFalsy();
+  expect(isType(null)).toBeFalsy();
+  expect(isType({ encode() {} })).toBeFalsy();
+  expect(isType({ decode() {} })).toBeFalsy();
+});

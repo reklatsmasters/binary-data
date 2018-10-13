@@ -1,15 +1,17 @@
-const fs = require('fs')
+'use strict';
+
+const fs = require('fs');
 const {
   types: { string },
   createEncodeStream,
-} = require('..')
+} = require('..');
 
-const NetworkPacket = string(null)
+const NetworkPacket = string(null);
 
-const output = createEncodeStream(NetworkPacket)
-const file = fs.createWriteStream('./encode.txt')
+const output = createEncodeStream(NetworkPacket);
+const file = fs.createWriteStream('./encode.txt');
 
-output.pipe(file)
+output.pipe(file);
 
-output.write('hello, world!')
-output.write('binary-data works!')
+output.write('hello, world!');
+output.write('binary-data works!');

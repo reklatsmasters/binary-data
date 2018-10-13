@@ -1,4 +1,6 @@
-const { types, decode } = require('..')
+'use strict';
+
+const { types, decode } = require('..');
 
 /* eslint-disable no-useless-concat */
 
@@ -13,7 +15,7 @@ const packet = Buffer.from(
     '03050306030203080408050806040105010601020104020502' +
     '06020202',
   'hex'
-)
+);
 
 const BinaryDataPacket = {
   contentType: types.uint8,
@@ -47,16 +49,16 @@ const BinaryDataPacket = {
       'bytes'
     ),
   },
-}
+};
 
-const count = 1e5
+const count = 1e5;
 
 function test(i) {
   while (--i > 0) {
-    decode(packet, BinaryDataPacket)
+    decode(packet, BinaryDataPacket);
   }
 }
 
-console.time('binary data')
-test(count)
-console.timeEnd('binary data')
+console.time('binary data');
+test(count);
+console.timeEnd('binary data');

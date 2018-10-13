@@ -4,9 +4,9 @@
   "description": "Declarative encoder/decoder of various binary data.",
   "main": "src/index.js",
   "scripts": {
-    "lint": "eslint .",
-    "cover": "jest --coverage",
-    "test": "npm run lint && jest",
+    "lint": "npx eslint .",
+    "cover": "npx jest --coverage",
+    "test": "npm run lint && npx jest",
     "test-ci": "npm run lint && npm run cover"
   },
   "repository": {
@@ -39,17 +39,10 @@
     "is-plain-object": "^2.0.3"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-config-xo-space": "^0.18.0",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-no-use-extend-native": "^0.3.12",
-    "eslint-plugin-node": "^6.0.1",
-    "eslint-plugin-prettier": "^2.6.0",
-    "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-unicorn": "^4.0.2",
+    "@nodertc/eslint-config": "0.2.1",
+    "eslint": "^5.6.1",
     "jest": "^23.6.0",
-    "prettier": "^1.11.1"
+    "prettier": "^1.14.3"
   },
   "jest": {
     "modulePaths": [
@@ -57,13 +50,55 @@
       "<rootDir>/src",
       "<rootDir>/src/node_modules"
     ],
-    "testRegex": "test/(.*)\\.js$",
+    "testMatch": [
+      "**/test/**/*.js"
+    ],
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
     "coverageDirectory": "<rootDir>/coverage",
+    "collectCoverageFrom": [
+      "**/src/*.js",
+      "**/src/node_modules/**/*.js"
+    ],
     "coveragePathIgnorePatterns": [
       "<rootDir>/node_modules/"
     ],
-    "collectCoverageFrom": [
-      "src/**/*.js"
+    "cacheDirectory": ".jest-cache"
+  },
+  "eslintConfig": {
+    "extends": "@nodertc",
+    "overrides": [
+      {
+        "files": [ "test/**/*.js" ],
+        "env": {
+          "jest": true
+        },
+        "settings": {
+          "import/resolver": {
+            "node": {
+              "moduleDirectory": [
+                "node_modules",
+                "src",
+                "src/node_modules"
+              ]
+            }
+          }
+        },
+        "rules": {
+          "require-jsdoc": "off"
+        }
+      },
+      {
+        "files": [ "benchmark/*.js", "examples/*.js" ],
+        "rules": {
+          "no-console": "off",
+          "require-jsdoc": "off",
+          "no-plusplus": "off",
+          "no-param-reassign": "off"
+
+        }
+      }
     ]
   }
 }

@@ -1,27 +1,29 @@
-const DecodeStream = require('streams/decode')
-const NotEnoughDataError = require('lib/not-enough-data-error')
+'use strict';
+
+const DecodeStream = require('streams/decode');
+const NotEnoughDataError = require('lib/not-enough-data-error');
 
 describe('decode', () => {
   test('readBuffer', () => {
-    const buf = Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5, 0x6])
-    const stream = new DecodeStream(buf)
-    expect(stream.length).toBe(buf.length)
+    const buf = Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5, 0x6]);
+    const stream = new DecodeStream(buf);
+    expect(stream.length).toBe(buf.length);
 
-    const wantRead = 2
+    const wantRead = 2;
 
-    const result = stream.readBuffer(wantRead)
-    expect(stream.length).toBe(buf.length - wantRead)
-    expect(result).toEqual(Buffer.from([0x1, 0x2]))
-  })
+    const result = stream.readBuffer(wantRead);
+    expect(stream.length).toBe(buf.length - wantRead);
+    expect(result).toEqual(Buffer.from([0x1, 0x2]));
+  });
 
   test('readBuffer # out of bounds', () => {
-    const buf = Buffer.from([0x1, 0x2])
-    const stream = new DecodeStream(buf)
+    const buf = Buffer.from([0x1, 0x2]);
+    const stream = new DecodeStream(buf);
 
-    const requestedBytes = buf.length + 1
+    const requestedBytes = buf.length + 1;
 
-    expect(() => stream.readBuffer(requestedBytes)).toThrow(NotEnoughDataError)
-  })
+    expect(() => stream.readBuffer(requestedBytes)).toThrow(NotEnoughDataError);
+  });
 
   test('default numbers', () => {
     const suites = [
@@ -46,22 +48,22 @@ describe('decode', () => {
 
       ['UInt32BE', 4, 0xffffffff - 1],
       ['UInt32LE', 4, 0xffffffff - 1],
-    ]
+    ];
 
-    const buf = Buffer.allocUnsafe(10)
+    const buf = Buffer.allocUnsafe(10);
 
     for (const suite of suites) {
-      const read = 'read' + suite[0]
-      const write = 'write' + suite[0]
+      const read = `read${suite[0]}`;
+      const write = `write${suite[0]}`;
 
-      buf.fill(0)
-      buf[write](suite[2], 0)
-      const stream = new DecodeStream(buf)
+      buf.fill(0);
+      buf[write](suite[2], 0);
+      const stream = new DecodeStream(buf);
 
-      expect(stream[read]()).toBe(suite[2])
-      expect(stream.length).toBe(buf.length - suite[1])
+      expect(stream[read]()).toBe(suite[2]);
+      expect(stream.length).toBe(buf.length - suite[1]);
     }
-  })
+  });
 
   describe('custom numbers', () => {
     const suites = [
@@ -71,22 +73,22 @@ describe('decode', () => {
 
       ['IntLE', 3, 0x7fffff - 1],
       ['UIntLE', 3, 0xffffff - 1],
-    ]
+    ];
 
-    const buf = Buffer.allocUnsafe(5)
+    const buf = Buffer.allocUnsafe(5);
 
     for (const suite of suites) {
-      const read = 'read' + suite[0]
-      const write = 'write' + suite[0]
+      const read = `read${suite[0]}`;
+      const write = `write${suite[0]}`;
 
       test(read, () => {
-        buf.fill(0)
-        buf[write](suite[2], 0, suite[1])
-        const stream = new DecodeStream(buf)
+        buf.fill(0);
+        buf[write](suite[2], 0, suite[1]);
+        const stream = new DecodeStream(buf);
 
-        expect(stream[read](suite[1])).toBe(suite[2])
-        expect(stream.length).toBe(buf.length - suite[1])
-      })
+        expect(stream[read](suite[1])).toBe(suite[2]);
+        expect(stream.length).toBe(buf.length - suite[1]);
+      });
     }
-  })
-})
+  });
+});

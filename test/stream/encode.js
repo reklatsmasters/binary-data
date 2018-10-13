@@ -1,96 +1,70 @@
-const Buffer = require('buffer').Buffer
-const EncodeStream = require('streams/encode')
+'use strict';
 
-const BufferMock = {
-  alloc() {
-    return this
-  },
+const EncodeStream = require('streams/encode');
 
-  allocUnsafe() {
-    return this
-  },
+describe('encode fixed', () => {
+  const suites = [
+    /* Type, size, test value */
+    ['DoubleBE', 8, Number.MAX_SAFE_INTEGER / 2],
+    ['DoubleLE', 8, Number.MAX_SAFE_INTEGER / 2],
 
-  writeDoubleBE: jest.fn(),
-  writeDoubleLE: jest.fn(),
-  writeFloatBE: jest.fn(),
-  writeFloatLE: jest.fn(),
-  writeInt8: jest.fn(),
-  writeInt16BE: jest.fn(),
-  writeInt16LE: jest.fn(),
-  writeInt32BE: jest.fn(),
-  writeInt32LE: jest.fn(),
-  writeIntBE: jest.fn(),
-  writeIntLE: jest.fn(),
-  writeUInt8: jest.fn(),
-  writeUInt16BE: jest.fn(),
-  writeUInt16LE: jest.fn(),
-  writeUInt32BE: jest.fn(),
-  writeUInt32LE: jest.fn(),
-  writeUIntBE: jest.fn(),
-  writeUIntLE: jest.fn(),
-}
+    ['FloatBE', 4, 0.5],
+    ['FloatLE', 4, 0.5],
 
-const methods = [
-  'writeDoubleBE',
-  'writeDoubleLE',
-  'writeFloatBE',
-  'writeFloatLE',
-  'writeInt8',
-  'writeInt16BE',
-  'writeInt16LE',
-  'writeInt32BE',
-  'writeInt32LE',
-  'writeIntBE',
-  'writeIntLE',
-  'writeUInt8',
-  'writeUInt16BE',
-  'writeUInt16LE',
-  'writeUInt32BE',
-  'writeUInt32LE',
-  'writeUIntBE',
-  'writeUIntLE',
-]
+    ['Int8', 1, 127],
+    ['UInt8', 1, 255],
 
-describe('encode', () => {
-  const stream = new EncodeStream()
-  stream.append = jest.fn()
+    ['Int16BE', 2, 0x7fff - 1],
+    ['Int16LE', 2, 0x7fff - 1],
 
-  beforeAll(() => {
-    global.Buffer = BufferMock
-  })
+    ['UInt16BE', 2, 0xffff - 1],
+    ['UInt16LE', 2, 0xffff - 1],
 
-  afterAll(() => {
-    global.Buffer = Buffer
-  })
+    ['Int32BE', 4, 0x7fffffff - 1],
+    ['Int32LE', 4, 0x7fffffff - 1],
 
-  afterEach(() => {
-    stream.append.mockClear()
+    ['UInt32BE', 4, 0xffffffff - 1],
+    ['UInt32LE', 4, 0xffffffff - 1],
+  ];
 
-    BufferMock.writeDoubleBE.mockClear()
-    BufferMock.writeDoubleLE.mockClear()
-    BufferMock.writeFloatBE.mockClear()
-    BufferMock.writeFloatLE.mockClear()
-    BufferMock.writeInt8.mockClear()
-    BufferMock.writeInt16BE.mockClear()
-    BufferMock.writeInt16LE.mockClear()
-    BufferMock.writeInt32BE.mockClear()
-    BufferMock.writeInt32LE.mockClear()
-    BufferMock.writeIntBE.mockClear()
-    BufferMock.writeIntLE.mockClear()
-    BufferMock.writeUInt8.mockClear()
-    BufferMock.writeUInt16BE.mockClear()
-    BufferMock.writeUInt16LE.mockClear()
-    BufferMock.writeUInt32BE.mockClear()
-    BufferMock.writeUInt32LE.mockClear()
-    BufferMock.writeUIntBE.mockClear()
-    BufferMock.writeUIntLE.mockClear()
-  })
+  for (const suite of suites) {
+    const method = `write${suite[0]}`;
+    const read = `read${suite[0]}`;
 
-  for (const method of methods) {
+    // eslint-disable-next-line no-loop-func
     test(method, () => {
-      stream[method]()
-      expect(BufferMock[method]).toBeCalled()
-      expect(stream.append).toBeCalledWith(BufferMock)
-    })
+      const stream = new EncodeStream();
+      stream[method](suite[2]);
+      const buf = stream.slice();
+
+      expect(stream.length).toBe(suite[1]);
+      expect(buf[read](0)).toBe(suite[2]);
+    });
   }
-})
+});
+
+describe('encode custom', () => {
+  const suites = [
+    /* Type, size, test value */
+    ['IntBE', 3, 0x7fffff - 1],
+    ['UIntBE', 3, 0xffffff - 1],
+
+    ['IntLE', 3, 0x7fffff - 1],
+    ['UIntLE', 3, 0xffffff - 1],
+  ];
+
+  for (const suite of suites) {
+    const method = `write${suite[0]}`;
+    const read = `read${suite[0]}`;
+
+    // eslint-disable-next-line no-loop-func
+    test(method, () => {
+      const stream = new EncodeStream();
+      stream[method](suite[2], suite[1]);
+      const buf = stream.slice();
+
+      expect(stream.length).toBe(suite[1]);
+      expect(buf[read](0, suite[1])).toBe(suite[2]);
+    });
+  }
+});
