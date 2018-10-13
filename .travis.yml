@@ -8,7 +8,6 @@ node_js:
 script: npm run test-ci
 before_install:
 - npm install -g npm@5
-## jest doesn't collect coverage from src/node_modules
-#- npm install -g --production coveralls
-#after_script:
-#- cat ./coverage/lcov.info | coveralls
+- npm install -g --production coveralls
+after_script:
+- cat ./coverage/lcov.info | coveralls
