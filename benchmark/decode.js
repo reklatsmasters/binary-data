@@ -1,6 +1,7 @@
 'use strict';
 
 const { types, decode } = require('..');
+const binary = require('binary'); // eslint-disable-line node/no-unpublished-require
 
 /* eslint-disable no-useless-concat */
 
@@ -59,6 +60,43 @@ function test(i) {
   }
 }
 
+function testBinary(i) {
+  while (--i > 0) {
+    parseBinary();
+  }
+}
+
+function parseBinary() {
+  // Incomplete ClientHello packet
+  const record = binary
+    .parse(packet)
+    .word8u('contentType')
+    .word16bu('version')
+    .word16bu('epoch')
+    .buffer('sequenceNumber', 6)
+    .word16bu('length')
+    .buffer('body', 'length').vars;
+  const handshake = binary
+    .parse(record.body)
+    .word8u('type')
+    .buffer('length', 3)
+    .word16bu('messageSeq')
+    .buffer('fragment_offset', 3)
+    .buffer('fragment_length', 3)
+    .word16bu('clientVersion')
+    .word32bu('gmtunixtime')
+    .buffer('randomBytes', 28)
+    .word8u('sessionId_length')
+    .buffer('sessionId', 'sessionId_length')
+    .word8u('cookie_length')
+    .buffer('cookie', 'cookie_length').vars;
+  return [record, handshake];
+}
+
 console.time('binary data');
 test(count);
 console.timeEnd('binary data');
+
+console.time('binary');
+testBinary(count);
+console.timeEnd('binary');

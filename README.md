@@ -74,6 +74,15 @@ const buf = wstream.slice()
 
 See [stun](https://github.com/nodertc/stun) or [dtls](https://github.com/nodertc/dtls) module for complete example.
 
+## Perfomance
+
+Decoding DTLS ClientHello packet, *nodejs 10.14.1 / Ubuntu 16.04 x64*
+
+|name|time|
+|---|---|
+|binary data|637.900ms|
+|binary|2229.218ms|
+
 ## API
 
 * [`decode(rstream: DecodeStream|Buffer, type: PrimitiveType|Object): any`](#decode)
