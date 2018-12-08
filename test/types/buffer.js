@@ -182,4 +182,52 @@ describe('buffer', () => {
       expect(type.encodingLength(Buffer.alloc(length))).toBe(length);
     });
   });
+
+  describe('argument `length` is null', () => {
+    test('decode', () => {
+      const buf = Buffer.from([1, 2, 3, 4, 5, 0, 5, 6, 7, 8]);
+      const length = buf.indexOf(0);
+      const expected = buf.slice(0, length);
+
+      const rstream = {
+        readBuffer: jest.fn().mockImplementation(size => buf.slice(0, size)),
+        buffer: {
+          indexOf: jest.fn().mockImplementation(byte => buf.indexOf(byte)),
+        },
+        consume: jest.fn(),
+      };
+
+      const type = buffer(null);
+
+      expect(type.decode(rstream)).toEqual(expected);
+      expect(type.decode.bytes).toEqual(length + 1);
+    });
+
+    test('encode', () => {
+      const buf = Buffer.from([1, 2, 3, 4, 5]);
+      const writeBuffer = jest.fn();
+      const writeUInt8 = jest.fn();
+      const wstream = {
+        writeBuffer,
+        writeUInt8,
+      };
+
+      const type = buffer(null);
+
+      type.encode(buf, wstream);
+
+      expect(writeBuffer).toHaveBeenCalledTimes(1);
+      expect(writeBuffer).toBeCalledWith(buf);
+      expect(writeUInt8).toHaveBeenCalledTimes(1);
+      expect(writeUInt8).toBeCalledWith(0);
+      expect(type.encode.bytes).toBe(buf.length + 1);
+    });
+
+    test('encodingLength', () => {
+      const buf = Buffer.from([1, 2, 3, 4, 5]);
+      const type = buffer(null);
+
+      expect(type.encodingLength(buf)).toBe(buf.length + 1);
+    });
+  });
 });
