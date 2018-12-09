@@ -33,14 +33,16 @@ test('should read buffer', () => {
   const transaction = new Transaction(stream);
 
   stream.append(Buffer.from([1, 2, 3, 4]));
-  stream.append(Buffer.from([5, 6, 7, 8, 9]));
+  stream.append(Buffer.from([1, 2, 3, 4, 9]));
 
   const size = stream.length;
   expect(transaction.length).toEqual(size);
 
+  expect(transaction.indexOf(3)).toBe(2);
   expect(transaction.readBuffer(3)).toEqual(Buffer.from([1, 2, 3]));
   expect(transaction.get(0)).toEqual(4);
-  expect(transaction.readBuffer(5)).toEqual(Buffer.from([4, 5, 6, 7, 8]));
+  expect(transaction.indexOf(3)).toBe(3);
+  expect(transaction.readBuffer(5)).toEqual(Buffer.from([4, 1, 2, 3, 4]));
 
   expect(stream.length).toEqual(size);
   expect(transaction.length).toEqual(size);
