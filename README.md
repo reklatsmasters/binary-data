@@ -9,6 +9,10 @@
 
 Declarative encoder/decoder of various binary data. This module works almost like as [`binary`](https://www.npmjs.com/package/binary) or [`restructure`](https://www.npmjs.com/package/restructure) but provided modern and clean api.
 
+### Support
+
+[![Buy Me A Coffee](https://www.buymeacoffee.com/assets/img/custom_images/purple_img.png)](https://www.buymeacoffee.com/reklatsmasters)
+
 ## Usage
 
 #### decode
