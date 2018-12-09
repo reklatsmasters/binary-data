@@ -1,6 +1,6 @@
 'use strict';
 
-jest.mock('streams/decode');
+jest.mock('lib/binary-stream');
 
 const reserved = require('types/reserved');
 const when = require('types/when');

@@ -1,12 +1,13 @@
 'use strict';
 
-const DecodeStream = require('streams/decode');
+const BinaryStream = require('lib/binary-stream');
 const NotEnoughDataError = require('lib/not-enough-data-error');
 
 describe('decode', () => {
   test('readBuffer', () => {
     const buf = Buffer.from([0x1, 0x2, 0x3, 0x4, 0x5, 0x6]);
-    const stream = new DecodeStream(buf);
+    const stream = new BinaryStream();
+    stream.append(buf);
     expect(stream.length).toBe(buf.length);
 
     const wantRead = 2;
@@ -18,8 +19,8 @@ describe('decode', () => {
 
   test('readBuffer # out of bounds', () => {
     const buf = Buffer.from([0x1, 0x2]);
-    const stream = new DecodeStream(buf);
-
+    const stream = new BinaryStream();
+    stream.append(buf);
     const requestedBytes = buf.length + 1;
 
     expect(() => stream.readBuffer(requestedBytes)).toThrow(NotEnoughDataError);
@@ -58,7 +59,8 @@ describe('decode', () => {
 
       buf.fill(0);
       buf[write](suite[2], 0);
-      const stream = new DecodeStream(buf);
+      const stream = new BinaryStream();
+      stream.append(buf);
 
       expect(stream[read]()).toBe(suite[2]);
       expect(stream.length).toBe(buf.length - suite[1]);
@@ -84,7 +86,8 @@ describe('decode', () => {
       test(read, () => {
         buf.fill(0);
         buf[write](suite[2], 0, suite[1]);
-        const stream = new DecodeStream(buf);
+        const stream = new BinaryStream();
+        stream.append(buf);
 
         expect(stream[read](suite[1])).toBe(suite[2]);
         expect(stream.length).toBe(buf.length - suite[1]);

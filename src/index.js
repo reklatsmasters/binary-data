@@ -1,7 +1,6 @@
 'use strict';
 
-const EncodeStream = require('streams/encode');
-const DecodeStream = require('streams/decode');
+const BinaryStream = require('lib/binary-stream');
 const array = require('types/array');
 const buffer = require('types/buffer');
 const bool = require('types/bool');
@@ -30,16 +29,22 @@ for (const type of Object.keys(numbers)) {
   types[type] = numbers[type]; // eslint-disable-line security/detect-object-injection
 }
 
+const kschema = Symbol('schema');
+
 /**
  * Create transform stream to encode objects into Buffer.
  * @param {Object} [schema]
  * @returns {EncodeStream}
  */
 function createEncodeStream(schema) {
-  return new EncodeStream({
-    schema,
+  const stream = new BinaryStream({
+    readableObjectMode: false,
+    writableObjectMode: true,
     transform: transformEncode,
   });
+
+  stream[kschema] = schema;
+  return stream;
 }
 
 /**
@@ -55,10 +60,13 @@ function createDecodeStream(bufOrSchema) {
     schema = bufOrSchema;
   }
 
-  const stream = new DecodeStream({
-    schema,
+  const stream = new BinaryStream({
     transform: transformDecode,
+    readableObjectMode: true,
+    writableObjectMode: false,
   });
+
+  stream[kschema] = schema;
 
   if (isBuffer) {
     stream.append(bufOrSchema);
@@ -75,7 +83,7 @@ function createDecodeStream(bufOrSchema) {
  */
 function transformEncode(chunk, encoding, cb) {
   try {
-    encode(chunk, this, this.schema);
+    encode(chunk, this, this[kschema]);
 
     const buf = this.slice();
     this.consume(buf.length);
@@ -98,7 +106,7 @@ function transformDecode(chunk, encoding, cb) {
   try {
     while (this.length > 0) {
       const transaction = new Transaction(this);
-      const data = decode(transaction, this.schema);
+      const data = decode(transaction, this[kschema]);
 
       transaction.commit();
       this.push(data);
@@ -126,7 +134,6 @@ module.exports = {
   types,
 
   /* Re-export utils */
-  EncodeStream,
-  DecodeStream,
+  BinaryStream,
   NotEnoughDataError,
 };

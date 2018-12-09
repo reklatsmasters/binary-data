@@ -1,11 +1,11 @@
 'use strict';
 
-const DecodeStream = require('streams/decode');
+const BinaryStream = require('lib/binary-stream');
 const Transaction = require('lib/transaction');
 const NotEnoughDataError = require('lib/not-enough-data-error');
 
 test('shoud work', () => {
-  const stream = new DecodeStream();
+  const stream = new BinaryStream();
 
   stream.buffer.writeUInt8(10);
   stream.buffer.writeUInt16BE(111);
@@ -29,7 +29,7 @@ test('shoud work', () => {
 });
 
 test('should read buffer', () => {
-  const stream = new DecodeStream();
+  const stream = new BinaryStream();
   const transaction = new Transaction(stream);
 
   stream.append(Buffer.from([1, 2, 3, 4]));
@@ -50,7 +50,7 @@ test('should read buffer', () => {
 });
 
 test('should have `bl` methods', () => {
-  const stream = new DecodeStream();
+  const stream = new BinaryStream();
   const transaction = new Transaction(stream);
   const buffer = Buffer.from([1, 2, 3, 4]);
 
@@ -62,7 +62,7 @@ test('should have `bl` methods', () => {
 });
 
 test('should emit NotEnoughDataError', () => {
-  const stream = new DecodeStream();
+  const stream = new BinaryStream();
   const transaction = new Transaction(stream);
 
   expect(() => transaction.readUIntBE(2)).toThrowError(NotEnoughDataError);

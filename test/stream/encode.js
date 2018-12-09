@@ -1,6 +1,6 @@
 'use strict';
 
-const EncodeStream = require('streams/encode');
+const BinaryStream = require('lib/binary-stream');
 
 describe('encode fixed', () => {
   const suites = [
@@ -33,7 +33,7 @@ describe('encode fixed', () => {
 
     // eslint-disable-next-line no-loop-func
     test(method, () => {
-      const stream = new EncodeStream();
+      const stream = new BinaryStream();
       stream[method](suite[2]);
       const buf = stream.slice();
 
@@ -59,7 +59,7 @@ describe('encode custom', () => {
 
     // eslint-disable-next-line no-loop-func
     test(method, () => {
-      const stream = new EncodeStream();
+      const stream = new BinaryStream();
       stream[method](suite[2], suite[1]);
       const buf = stream.slice();
 
