@@ -30,9 +30,7 @@ describe('string', () => {
           .fn()
           .mockImplementation(() => Buffer.from(`${expectedValue}\0`)),
         length: expectedLength,
-        buffer: {
-          indexOf: jest.fn().mockImplementation(i => values.indexOf(i)),
-        },
+        indexOf: jest.fn().mockImplementation(i => values.indexOf(i)),
       };
 
       const type = string(null);

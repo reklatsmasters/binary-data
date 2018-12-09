@@ -191,9 +191,7 @@ describe('buffer', () => {
 
       const rstream = {
         readBuffer: jest.fn().mockImplementation(size => buf.slice(0, size)),
-        buffer: {
-          indexOf: jest.fn().mockImplementation(byte => buf.indexOf(byte)),
-        },
+        indexOf: jest.fn().mockImplementation(byte => buf.indexOf(byte)),
         consume: jest.fn(),
       };
 

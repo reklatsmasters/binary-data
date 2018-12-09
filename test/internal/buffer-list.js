@@ -66,16 +66,20 @@ test('get(i)', () => {
 test('indexOf(i)', () => {
   const bl = new BufferList();
   const buf1 = Buffer.from([1, 2, 3, 4, 5]);
-  const buf2 = Buffer.from([6, 7, 8, 9]);
+  const buf2 = Buffer.from([6, 7, 8, 0]);
 
   bl.append([buf1, buf2]);
 
   expect(bl.indexOf(1)).toBe(0);
   expect(bl.indexOf(3)).toBe(2);
+  expect(bl.indexOf(5)).toBe(4);
   expect(bl.indexOf(8)).toBe(7);
+  expect(bl.indexOf(0)).toBe(8);
 
   bl.consume(2);
+  expect(bl.indexOf(5)).toBe(2);
   expect(bl.indexOf(8)).toBe(5);
+  expect(bl.indexOf(0)).toBe(6);
 
   expect(() => bl.indexOf(-1)).toThrow('Invalid argument 1');
   expect(() => bl.indexOf(300)).toThrow('Invalid argument 1');
@@ -92,6 +96,8 @@ test('indexOf(i, offset)', () => {
   expect(bl.indexOf(3, 2)).toBe(2);
   expect(bl.indexOf(8, 2)).toBe(7);
   expect(bl.indexOf(8, 6)).toBe(7);
+  expect(bl.indexOf(9, 2)).toBe(8);
+  expect(bl.indexOf(9, 6)).toBe(8);
 
   bl.consume(2);
   expect(bl.indexOf(8, 2)).toBe(5);
@@ -100,15 +106,26 @@ test('indexOf(i, offset)', () => {
 
 test('indexOf(i, offset) multiple', () => {
   const bl = new BufferList();
-  const buf1 = Buffer.from([1, 2, 3, 4, 5]);
-  const buf2 = Buffer.from([6, 7, 3, 9]);
+  const buf1 = Buffer.from([1, 2, 0, 4, 5]);
+  const buf2 = Buffer.from([6, 7, 8, 0]);
 
   bl.append([buf1, buf2]);
 
-  expect(bl.indexOf(3, 2)).toBe(2);
-  expect(bl.indexOf(3, 6)).toBe(7);
+  expect(bl.indexOf(0, 2)).toBe(2);
+  expect(bl.indexOf(0, 6)).toBe(8);
 
   bl.consume(2);
-  expect(bl.indexOf(3, 0)).toBe(0);
-  expect(bl.indexOf(3, 4)).toBe(5);
+  expect(bl.indexOf(0, 0)).toBe(0);
+  expect(bl.indexOf(0, 4)).toBe(6);
+});
+
+test('indexOf() index - offset = -1', () => {
+  const buf = Buffer.from([1, 2, 3, 4, 5, 6, 0, 7, 8, 9, 10, 64, 21, 0]);
+  const bl = new BufferList();
+
+  bl.append(buf);
+
+  expect(bl.indexOf(0)).toBe(6);
+  bl.consume(7);
+  expect(bl.indexOf(0)).toBe(6);
 });
