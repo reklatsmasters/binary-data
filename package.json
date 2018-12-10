@@ -1,7 +1,7 @@
 {
   "name": "binary-data",
   "version": "0.5.0",
-  "description": "Declarative encoder/decoder of various binary data.",
+  "description": "Declarative binary data encoder / decoder.",
   "main": "src/index.js",
   "scripts": {
     "lint": "npx eslint .",
@@ -22,7 +22,8 @@
     "encode",
     "bl",
     "bin-protocol",
-    "restructure"
+    "restructure",
+    "varstruct"
   ],
   "author": "Dmitry Tsvettsikh <me@reklatsmasters.com>",
   "license": "MIT",

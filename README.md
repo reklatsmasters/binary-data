@@ -7,7 +7,7 @@
 [![downloads](https://img.shields.io/npm/dm/binary-data.svg)](https://npmjs.org/package/binary-data)
 [![Coverage Status](https://coveralls.io/repos/github/reklatsmasters/binary-data/badge.svg?branch=master)](https://coveralls.io/github/reklatsmasters/binary-data?branch=master)
 
-Declarative encoder/decoder of various binary data. This module works almost like as [`binary`](https://www.npmjs.com/package/binary) or [`restructure`](https://www.npmjs.com/package/restructure) but provided modern and clean api.
+Declarative binary data encoder / decoder. This module works almost like as [`binary`](https://www.npmjs.com/package/binary) or [`restructure`](https://www.npmjs.com/package/restructure) but provided modern and clean api. It inspired by [abstract-encoding](https://github.com/mafintosh/abstract-encoding) interface.
 
 ### Support
 
@@ -58,9 +58,7 @@ const hello = {
 }
 
 // Just encode message
-const ostream = createEncode();
-encode(hello, ostream, protocol)
-
+const ostream = encode(hello, protocol);
 const packet = ostream.slice();
 
 // Or you may encode messages into a stream
@@ -72,6 +70,16 @@ const socket = net.createConnection({ port: 8124 }, () => {
 });
 
 ostream.pipe(socket);
+
+// You may combine multiple schemes into one stream
+const ostream = createEncode();
+
+encode(obj1, ostream, protocol1);
+encode(obj2, ostream, protocol2);
+encode(obj3, ostream, protocol3);
+
+const packet = ostream.slice();
+
 ```
 
 See [stun](https://github.com/nodertc/stun) or [dtls](https://github.com/nodertc/dtls) module for complete example.
@@ -87,11 +95,13 @@ Decoding DTLS ClientHello packet, *nodejs 10.14.1 / Ubuntu 16.04 x64*
 
 ## API
 
-* [`decode(rstream: DecodeStream|Buffer, type: PrimitiveType|Object): any`](#decode)
-* [`encode(item: any, wstream: EncodeStream, type: PrimitiveType|Object): void`](#encode)
-* [`encodingLength(item: any, type: PrimitiveType|Object): Number`](#encoding-length)
-* [`createEncodeStream(): EncodeStream`](#create-encode-stream)
-* [`createDecodeStream([buf: Buffer]): DecodeStream`](#create-decode-stream)
+* [`encode(obj: any, [target: BinaryStream], type: Object): BinaryStream`](#encode)
+* [`decode(source: BinaryStream|Buffer, type: Object): any`](#decode)
+* [`encodingLength(item: any, type: Object): Number`](#encoding-length)
+* [`createEncodeStream([type: Object]): BinaryStream`](#create-encode-stream)
+* [`createDecodeStream([type: Object|Buffer]): BinaryStream`](#create-decode-stream)
+* [`createEncode([type: Object]): BinaryStream`](#create-encode-stream)
+* [`createDecode([type: Object|Buffer]): BinaryStream`](#create-decode-stream)
 * [Types](#types)
   * [`(u)int(8, 16, 24, 32, 40, 48)(be, le)`](#types-int)
   * [`(double, float)(be, le)`](#types-float)
@@ -104,33 +114,35 @@ Decoding DTLS ClientHello packet, *nodejs 10.14.1 / Ubuntu 16.04 x64*
 
 <a name='decode' />
 
-#### `decode(rstream: DecodeStream|Buffer, type: PrimitiveType|Object): any`
+#### `decode(source: BinaryStream|Buffer, type: Object): any`
 
 Reads any data from stream `rstream` using data type `type`. See examples above.
 
 <a name='encode' />
 
-#### `encode(item: any, wstream: EncodeStream, type: PrimitiveType|Object): void`
+#### `encode(obj: any, [target: BinaryStream], type: Object): BinaryStream`
 
-Writes any data `item` to stream `wstream` using data type `type`. See examples above.
+Writes any data `obj` to stream `target` using data type `type`. See examples above.
 
 <a name='encoding-length' />
 
-#### `encodingLength(item: any, type: PrimitiveType|Object): Number`
+#### `encodingLength(item: any, type: Object): Number`
 
 Return the amount of bytes needed to encode `item` using `type`.
 
 <a name='create-encode-stream' />
 
-#### `createEncodeStream(): EncodeStream`
+#### `createEncodeStream([type: Object]): BinaryStream`
+#### `createEncode([type: Object]): BinaryStream`
 
-Create instance of EncodeStream.
+Create instance of BinaryStream.
 
 <a name='create-decode-stream' />
 
-#### `createDecodeStream([buf: Buffer]): DecodeStream`
+#### `createDecodeStream([type: Object|Buffer]): BinaryStream`
+#### `createDecode([type: Object|Buffer]): BinaryStream`
 
-Create instance of DecodeStream using buffer `buf`.
+Create instance of BinaryStream.
 
 <a name='types' />
 
@@ -217,9 +229,9 @@ decode(rstream, schema) // return false
 
 <a name='types-buffer' />
 
-#### `buffer(length)`
+#### `buffer(length: Object|null|number)`
 
-Low-level buffer type. Argument `length` can be _number_, number _type_ for size-prefixed data or _function_.
+Low-level buffer type. Argument `length` can be _number_, number _type_ for size-prefixed data, _function_ or _null_.
 
 ```js
 buffer(5) // buffer should be 5 bytes
