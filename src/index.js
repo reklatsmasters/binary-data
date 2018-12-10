@@ -83,7 +83,7 @@ function createDecodeStream(bufOrSchema) {
  */
 function transformEncode(chunk, encoding, cb) {
   try {
-    encode(chunk, this, this[kschema]);
+    encode(chunk, this[kschema], this);
 
     const buf = this.slice();
     this.consume(buf.length);

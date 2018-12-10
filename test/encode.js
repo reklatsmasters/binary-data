@@ -2,10 +2,11 @@
 
 const reserved = require('types/reserved');
 const { encode } = require('lib/encode');
+const BinaryStream = require('lib/binary-stream');
 
 describe('encode', () => {
   test('should encode objects using schema', () => {
-    const wstream = {};
+    const wstream = new BinaryStream();
 
     const schema = {
       a: {
@@ -24,15 +25,16 @@ describe('encode', () => {
     schema.a.encode.bytes = 10;
     schema.b.encode.bytes = 33;
 
-    encode(object, wstream, schema);
+    const res = encode(object, wstream, schema);
 
     expect(schema.a.encode).toHaveBeenCalledTimes(1);
     expect(schema.b.encode).toHaveBeenCalledTimes(1);
     expect(encode.bytes).toEqual(schema.a.encode.bytes + schema.b.encode.bytes);
+    expect(res).toBe(wstream);
   });
 
   test('should encode reserved fields', () => {
-    const wstream = {};
+    const wstream = new BinaryStream();
 
     const bytes1 = 33;
     const bytes2 = 10;
@@ -65,7 +67,7 @@ describe('encode', () => {
   });
 
   test('each field should be a valid type', () => {
-    const wstream = {};
+    const wstream = new BinaryStream();
 
     const schema = {
       a: null,
@@ -77,7 +79,7 @@ describe('encode', () => {
   });
 
   test('schema should be a plain object', () => {
-    const wstream = {};
+    const wstream = new BinaryStream();
     const expectedError = 'Argument `schema` should be a plain object.';
 
     expect(() => encode({}, wstream, 123)).toThrow(expectedError);
@@ -86,7 +88,7 @@ describe('encode', () => {
   });
 
   test('should encode nexted objects', () => {
-    const wstream = {};
+    const wstream = new BinaryStream();
 
     const encodeFn = jest.fn();
 
@@ -113,5 +115,53 @@ describe('encode', () => {
     encode(object, wstream, schema);
     expect(encodeFn).toHaveBeenCalledTimes(2);
     expect(encode.bytes).toEqual(encodeFn.bytes * 2);
+  });
+
+  test('should create stream', () => {
+    const schema = {
+      a: {
+        encode: jest.fn(),
+      },
+    };
+
+    const object = {
+      a: 100,
+    };
+
+    schema.a.encode.bytes = 10;
+
+    const res = encode(object, schema);
+
+    expect(schema.a.encode).toHaveBeenCalledTimes(1);
+    expect(encode.bytes).toEqual(schema.a.encode.bytes);
+    expect(res).toBeInstanceOf(BinaryStream);
+  });
+
+  test('should accept a stream as last argument', () => {
+    const wstream = new BinaryStream();
+
+    const schema = {
+      a: {
+        encode: jest.fn(),
+      },
+      b: {
+        encode: jest.fn(),
+      },
+    };
+
+    const object = {
+      a: 100,
+      b: 200,
+    };
+
+    schema.a.encode.bytes = 10;
+    schema.b.encode.bytes = 33;
+
+    const res = encode(object, schema, wstream);
+
+    expect(schema.a.encode).toHaveBeenCalledTimes(1);
+    expect(schema.b.encode).toHaveBeenCalledTimes(1);
+    expect(encode.bytes).toEqual(schema.a.encode.bytes + schema.b.encode.bytes);
+    expect(res).toBe(wstream);
   });
 });
