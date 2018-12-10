@@ -18,62 +18,60 @@ Declarative encoder/decoder of various binary data. This module works almost lik
 #### decode
 
 ```js
-const { decode, createDecodeStream, types: { uint8, array, string } } = require('binary-data')
+const { decode, createDecode, types: { uint8, array, string } } = require('binary-data')
 
-// 1.1 define your own schema as plain object
+// 1. Define your own schema as plain object
 const protocol = {
   type: uint8,
   value: array(string(null), uint8)
 }
 
-socket.on('message', (message) => {
-  // 1.2 decode message
-  const packet = decode(message, protocol)
-})
+const message = Buffer.from([1, 2, 3, 4, 5, 6, 0]);
 
-// 2.1 also you may decode messages from streams
-const unicast = require('unicast')
+// Just decode message
+const packet = decode(message, protocol)
 
-const socket = unicast.createSocket({ /* options */ })
+// 2 Also you may decode messages from streams
+const net = require('net');
 
-// 2.2 create stream
-const input = createDecodeStream(protocol)
+const socket = net.createConnection({ port: 8124 });
+const istream = createDecode(protocol);
 
-// 2.3 connect streams
-socket.pipe(input).on('data', packet => { /* do stuff */ })
+socket.pipe(istream).on('data', packet => {
+  console.log(packet.type, packet.value);
+});
 ```
 
 #### encode
 
 ```js
-const { encode, createEncodeStream, types: { uint8, buffer } } = require('binary-data')
+const { encode, createEncode, types: { uint8, string } } = require('binary-data')
 
-// 1. define schema
 const protocol = {
   type: uint8,
-  data: buffer(uint8)
+  value: string(uint8)
 }
 
-// 2. create data object (string, array - what you want)
 const hello = {
   type: 12,
-  data: Buffer.from('my random data')
+  value: 'my random data'
 }
 
-// 3. create encode stream
-const wstream = createEncodeStream(protocol)
+// Just encode message
+const ostream = createEncode();
+encode(hello, ostream, protocol)
 
-// 4. connect streams
-wstream.pipe(socket)
+const packet = ostream.slice();
 
-// 5.1. encode all your data
-wstream.write(hello)
+// Or you may encode messages into a stream
+const net = require('net');
 
-// 5.2 or use another schema
-encode(anotherPacket, wstream, anotherSchema)
+const ostream = createEncode(protocol);
+const socket = net.createConnection({ port: 8124 }, () => {
+  ostream.write(hello);
+});
 
-// 5.3 or convert to a buffer
-const buf = wstream.slice()
+ostream.pipe(socket);
 ```
 
 See [stun](https://github.com/nodertc/stun) or [dtls](https://github.com/nodertc/dtls) module for complete example.
