@@ -130,6 +130,10 @@ module.exports = {
   decode,
   encodingLength,
 
+  /* aliases */
+  createEncode: createEncodeStream,
+  createDecode: createDecodeStream,
+
   /* Data types */
   types,
 
