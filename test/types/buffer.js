@@ -1,6 +1,7 @@
 'use strict';
 
 const buffer = require('types/buffer');
+const BinaryStream = require('lib/binary-stream');
 
 describe('buffer', () => {
   describe('argument `length` is number', () => {
@@ -227,5 +228,21 @@ describe('buffer', () => {
 
       expect(type.encodingLength(buf)).toBe(buf.length + 1);
     });
+  });
+
+  test('should be able to encode BinaryStream', () => {
+    jest.unmock('lib/binary-stream');
+
+    const buf = new BinaryStream();
+    buf.writeBuffer(Buffer.from([1, 2]));
+    buf.writeBuffer(Buffer.from([3, 4]));
+
+    const wstream = new BinaryStream();
+    const type = buffer(null);
+
+    type.encode(buf, wstream);
+
+    expect(wstream.slice()).toEqual(Buffer.from([1, 2, 3, 4, 0]));
+    expect(type.encode.bytes).toBe(buf.length + 1);
   });
 });
