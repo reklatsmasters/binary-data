@@ -10,7 +10,9 @@ describe('select', () => {
 
   const defaultType = {
     decode: () => defaultValue,
-    encode() {},
+    encode: jest.fn().mockImplementation(() => {
+      defaultType.encode.bytes = defaultBytes;
+    }),
   };
 
   defaultType.decode.bytes = defaultBytes;
@@ -20,7 +22,9 @@ describe('select', () => {
 
   const firstType = {
     decode: () => firstValue,
-    encode() {},
+    encode: jest.fn().mockImplementation(() => {
+      firstType.encode.bytes = firstBytes;
+    }),
   };
 
   firstType.decode.bytes = firstBytes;
@@ -30,7 +34,9 @@ describe('select', () => {
 
   const secondType = {
     decode: () => secondValue,
-    encode() {},
+    encode: jest.fn().mockImplementation(() => {
+      secondType.encode.bytes = secondBytes;
+    }),
   };
 
   secondType.decode.bytes = secondBytes;
@@ -81,5 +87,84 @@ describe('select', () => {
     expect(type.decode({})).toBe(undefined);
     expect(type.decode.bytes).toEqual(0);
     expect(type[symbols.skip]).toEqual(true);
+  });
+
+  test('encode first option', () => {
+    jest.clearAllMocks();
+    const wstream = {};
+    const context = {};
+
+    const type = select(
+      when(() => true, firstType),
+      when(() => false, secondType),
+      defaultType
+    );
+
+    type.encode({}, wstream, context);
+
+    expect(type.encode.bytes).toEqual(firstBytes);
+    expect(type[symbols.skip]).toEqual(false);
+    expect(firstType.encode).toHaveBeenCalledTimes(1);
+    expect(secondType.encode).toHaveBeenCalledTimes(0);
+    expect(defaultType.encode).toHaveBeenCalledTimes(0);
+  });
+
+  test('encode second option', () => {
+    jest.clearAllMocks();
+    const wstream = {};
+    const context = {};
+
+    const type = select(
+      when(() => false, firstType),
+      when(() => true, secondType),
+      defaultType
+    );
+
+    type.encode({}, wstream, context);
+
+    expect(type.encode.bytes).toEqual(secondBytes);
+    expect(type[symbols.skip]).toEqual(false);
+    expect(firstType.encode).toHaveBeenCalledTimes(0);
+    expect(secondType.encode).toHaveBeenCalledTimes(1);
+    expect(defaultType.encode).toHaveBeenCalledTimes(0);
+  });
+
+  test('encode default option', () => {
+    jest.clearAllMocks();
+    const wstream = {};
+    const context = {};
+
+    const type = select(
+      when(() => false, firstType),
+      when(() => false, secondType),
+      defaultType
+    );
+
+    type.encode({}, wstream, context);
+
+    expect(type.encode.bytes).toEqual(defaultBytes);
+    expect(type[symbols.skip]).toEqual(false);
+    expect(firstType.encode).toHaveBeenCalledTimes(0);
+    expect(secondType.encode).toHaveBeenCalledTimes(0);
+    expect(defaultType.encode).toHaveBeenCalledTimes(1);
+  });
+
+  test('skip after encode', () => {
+    jest.clearAllMocks();
+    const wstream = {};
+    const context = {};
+
+    const type = select(
+      when(() => false, firstType),
+      when(() => false, secondType)
+    );
+
+    type.encode({}, wstream, context);
+
+    expect(type.encode.bytes).toEqual(0);
+    expect(type[symbols.skip]).toEqual(true);
+    expect(firstType.encode).toHaveBeenCalledTimes(0);
+    expect(secondType.encode).toHaveBeenCalledTimes(0);
+    expect(defaultType.encode).toHaveBeenCalledTimes(0);
   });
 });
